@@ -1,1 +1,286 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>Merge Avatars</title>
+<style>
+  :root{
+    --bg:#050816; --panel:#0c1428; --line:#24385f; --text:#eef6ff;
+    --red:#ff3b30; --blue:#1da1ff; --gold:#ffd84d; --green:#4dff88;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100vh; font-family:Arial,Helvetica,sans-serif;
+    background:radial-gradient(circle at top,#10224c 0,#070b18 45%,#02040a 100%);
+    color:var(--text); overflow-x:hidden;
+  }
+  .app{max-width:1050px;margin:auto;padding:14px}
+  header{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    background:linear-gradient(90deg,#24060a,#071a38);
+    border:2px solid #2b4b79;border-radius:18px;padding:14px 16px;
+    box-shadow:0 0 30px rgba(29,161,255,.2);
+  }
+  .logo{font-weight:1000;font-style:italic;font-size:clamp(25px,5vw,46px);letter-spacing:-2px}
+  .logo .r{color:var(--red)} .logo .b{color:var(--blue)}
+  .stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .pill{background:#080d1a;border:1px solid #31507d;border-radius:999px;padding:8px 12px;font-weight:bold}
+  .layout{display:grid;grid-template-columns:1.25fr .75fr;gap:14px;margin-top:14px}
+  .panel{
+    background:linear-gradient(180deg,rgba(16,28,54,.97),rgba(7,12,26,.97));
+    border:1px solid #28456f;border-radius:18px;padding:14px;
+    box-shadow:inset 0 0 25px rgba(29,161,255,.05),0 12px 35px rgba(0,0,0,.35);
+  }
+  h2{margin:0 0 12px;font-size:20px}
+  .arena{
+    min-height:240px;border-radius:16px;border:1px solid #294973;
+    background:
+      linear-gradient(rgba(12,25,54,.3),rgba(0,0,0,.65)),
+      repeating-linear-gradient(90deg,transparent 0 49px,rgba(29,161,255,.08) 50px),
+      repeating-linear-gradient(0deg,transparent 0 49px,rgba(255,59,48,.07) 50px);
+    display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
+  }
+  .arena:before{content:"";position:absolute;width:240px;height:240px;border-radius:50%;border:2px solid #1d6fb0;box-shadow:0 0 45px #1d6fb0 inset;opacity:.35}
+  .egg{font-size:110px;filter:drop-shadow(0 0 22px #1da1ff);animation:pulse 1.2s infinite alternate;z-index:1}
+  @keyframes pulse{to{transform:scale(1.07);filter:drop-shadow(0 0 32px #ff3b30)}}
+  button{
+    border:0;border-radius:12px;padding:12px 16px;font-weight:900;font-size:15px;cursor:pointer;
+    color:#07101e;background:linear-gradient(#ffe66b,#ffb000);
+    box-shadow:0 5px 0 #a66e00;transition:.12s;
+  }
+  button:active{transform:translateY(4px);box-shadow:0 1px 0 #a66e00}
+  button.blue{background:linear-gradient(#4bc3ff,#1478ff);color:white;box-shadow:0 5px 0 #0b3c91}
+  button.red{background:linear-gradient(#ff765c,#f02525);color:white;box-shadow:0 5px 0 #8f1010}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .message{min-height:28px;margin-top:10px;color:#bcd8ff;font-weight:bold}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .card{
+    position:relative;min-height:142px;border-radius:14px;padding:10px;border:2px solid #35527d;
+    background:linear-gradient(180deg,#162b52,#091125);display:flex;flex-direction:column;align-items:center;justify-content:center;
+    user-select:none;cursor:pointer;transition:.15s;
+  }
+  .card:hover{transform:translateY(-3px)}
+  .card.selected{outline:3px solid var(--gold);box-shadow:0 0 18px var(--gold)}
+  .avatar{font-size:52px}
+  .name{font-weight:1000;margin-top:6px;text-align:center}
+  .level{position:absolute;top:7px;left:8px;font-size:12px;background:#050914;padding:4px 7px;border-radius:8px}
+  .power{font-size:12px;color:#95caff}
+  .rarity{font-size:13px;color:#ffd84d;letter-spacing:1px}
+  .fighter{
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;
+    background:radial-gradient(circle,#17335c,#080d1a);border:1px solid #2d4e7e;border-radius:16px;padding:16px;
+  }
+  .fighterSide{text-align:center}
+  .fighterEmoji{font-size:82px;filter:drop-shadow(0 0 15px #1da1ff)}
+  .enemy .fighterEmoji{filter:drop-shadow(0 0 15px #ff3b30)}
+  .versus{font-size:36px;font-weight:1000;color:var(--gold)}
+  .bar{height:14px;background:#1a2437;border-radius:99px;overflow:hidden;margin:8px 0}
+  .fill{height:100%;width:100%;background:linear-gradient(90deg,#2bff77,#caff55);transition:.5s}
+  .enemy .fill{background:linear-gradient(90deg,#ff9b42,#ff3b30)}
+  .small{font-size:12px;color:#a9bddb}
+  .rules{line-height:1.5;color:#c6d9f5}
+  .footer{text-align:center;color:#7796bf;padding:18px;font-size:12px}
+  .burst{animation:burst .45s}
+  @keyframes burst{50%{transform:scale(1.15);filter:brightness(1.8)}}
+  @media(max-width:800px){
+    .layout{grid-template-columns:1fr}
+    .grid{grid-template-columns:repeat(3,1fr)}
+    .fighterEmoji{font-size:62px}
+  }
+  @media(max-width:480px){
+    .grid{grid-template-columns:repeat(2,1fr)}
+    .stats{font-size:12px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo"><span class="r">MERGE</span> <span class="b">AVATARS</span></div>
+    <div class="stats">
+      <div class="pill">🪙 <span id="coins">1500</span></div>
+      <div class="pill">💎 <span id="gems">25</span></div>
+      <div class="pill">🏆 Level <span id="playerLevel">1</span></div>
+    </div>
+  </header>
+  <div class="layout">
+    <section class="panel">
+      <h2>🥚 Hatch & Merge</h2>
+      <div class="arena" id="arena"><div class="egg" id="egg">🥚</div></div>
+      <div class="actions">
+        <button id="openEggBtn">Open Egg — 100 Coins</button>
+        <button class="blue" id="mergeBtn">Merge Selected</button>
+      </div>
+      <div class="message" id="message">Open eggs, then tap two matching avatars to merge them.</div>
+      <h2 style="margin-top:18px">Your Avatars</h2>
+      <div class="grid" id="avatarGrid"></div>
+    </section>
+    <aside class="panel">
+      <h2>⚔️ Battle Arena</h2>
+      <div class="fighter">
+        <div class="fighterSide">
+          <div class="small">YOUR STRONGEST</div>
+          <div class="fighterEmoji" id="heroEmoji">🧑‍🚀</div>
+          <b id="heroName">No Avatar</b>
+          <div class="bar"><div class="fill" id="heroHp"></div></div>
+          <div class="small">Power: <span id="heroPower">0</span></div>
+        </div>
+        <div class="versus">VS</div>
+        <div class="fighterSide enemy">
+          <div class="small">ENEMY</div>
+          <div class="fighterEmoji" id="enemyEmoji">👹</div>
+          <b id="enemyName">Void Beast</b>
+          <div class="bar"><div class="fill" id="enemyHp"></div></div>
+          <div class="small">Power: <span id="enemyPower">170</span></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="red" id="battleBtn">Battle!</button>
+      </div>
+      <div class="message" id="battleMessage">Build a fighter, then enter battle.</div>
+      <h2 style="margin-top:20px">How to Play</h2>
+      <div class="rules">
+        1. Open eggs to collect avatars.<br>
+        2. Tap two avatars with the same name and level.<br>
+        3. Press <b>Merge Selected</b> to evolve them.<br>
+        4. Stronger avatars increase your battle power.<br>
+        5. Win battles to earn coins and gems.
+      </div>
+    </aside>
+  </div>
+  <div class="footer">Playable fan-made prototype • Progress saves automatically on this device</div>
+</div>
+<script>
+const TYPES = [
+  {name:"Ember", emoji:"🔥", color:"#ff4a2d"},
+  {name:"Thunder", emoji:"⚡", color:"#2faeff"},
+  {name:"Shadow", emoji:"🥷", color:"#a66cff"},
+  {name:"Frost", emoji:"❄️", color:"#82e8ff"},
+  {name:"Nova", emoji:"🌟", color:"#ffd84d"},
+  {name:"Mecha", emoji:"🤖", color:"#8ff0d0"}
+];
+/* safe storage: game still works even if saving is blocked */
+function loadSave(){
+  try{ return JSON.parse(localStorage.getItem("mergeAvatarsSave") || "null"); }
+  catch(e){ return null; }
+}
+let state = loadSave() || {
+  coins:1500, gems:25, level:1, avatars:[], selected:[]
+};
+if(!Array.isArray(state.avatars)) state.avatars = [];
+if(!Array.isArray(state.selected)) state.selected = [];
+const $ = id => document.getElementById(id);
+function save(){
+  try{ localStorage.setItem("mergeAvatarsSave", JSON.stringify(state)); }
+  catch(e){}
+}
+function power(a){ return Math.round(90 * Math.pow(1.8, a.level-1)); }
+function stars(level){ return "★".repeat(Math.min(level+1,5)); }
+function render(){
+  $("coins").textContent = state.coins;
+  $("gems").textContent = state.gems;
+  $("playerLevel").textContent = state.level;
+  const grid = $("avatarGrid");
+  grid.innerHTML = "";
+  state.avatars.forEach((a,i)=>{
+    const t = TYPES[a.type];
+    const card = document.createElement("div");
+    card.className = "card" + (state.selected.includes(i) ? " selected" : "");
+    card.style.borderColor = t.color;
+    card.innerHTML = `
+      <div class="level">Lv.${a.level}</div>
+      <div class="avatar">${t.emoji}</div>
+      <div class="name">${t.name} ${a.level>=3?"Warrior":"Avatar"}</div>
+      <div class="rarity">${stars(a.level)}</div>
+      <div class="power">Power ${power(a)}</div>`;
+    card.onclick = ()=>selectAvatar(i);
+    grid.appendChild(card);
+  });
+  const strongest = [...state.avatars].sort((a,b)=>power(b)-power(a))[0];
+  if(strongest){
+    const t=TYPES[strongest.type];
+    $("heroEmoji").textContent=t.emoji;
+    $("heroName").textContent=`${t.name} Lv.${strongest.level}`;
+    $("heroPower").textContent=power(strongest);
+  } else {
+    $("heroEmoji").textContent="🧑‍🚀";
+    $("heroName").textContent="No Avatar";
+    $("heroPower").textContent="0";
+  }
+  save();
+}
+function selectAvatar(i){
+  const pos=state.selected.indexOf(i);
+  if(pos>=0) state.selected.splice(pos,1);
+  else {
+    if(state.selected.length>=2) state.selected.shift();
+    state.selected.push(i);
+  }
+  render();
+}
+$("openEggBtn").onclick=()=>{
+  if(state.coins<100 && state.avatars.length===0){
+    state.coins+=300; // mercy bonus so you can never get stuck
+    $("message").textContent="💰 Bonus! The game gave you 300 coins — open that egg!";
+    render();
+    return;
+  }
+  if(state.coins<100){ $("message").textContent="You need 100 coins — win a battle to earn more!"; return; }
+  state.coins-=100;
+  const type=Math.floor(Math.random()*TYPES.length);
+  const avatar={type,level:1};
+  state.avatars.push(avatar);
+  const t=TYPES[type];
+  $("egg").textContent=t.emoji;
+  $("egg").classList.add("burst");
+  setTimeout(()=>{$("egg").textContent="🥚";$("egg").classList.remove("burst");},700);
+  $("message").textContent=`You hatched ${t.name}! Find another matching one to merge.`;
+  render();
+};
+$("mergeBtn").onclick=()=>{
+  if(state.selected.length!==2){ $("message").textContent="Select exactly two avatars."; return; }
+  const [i,j]=state.selected.sort((a,b)=>a-b);
+  const a=state.avatars[i], b=state.avatars[j];
+  if(!a || !b || a.type!==b.type || a.level!==b.level){
+    $("message").textContent="Those avatars do not match. Choose the same type and level.";
+    return;
+  }
+  const evolved={type:a.type,level:a.level+1};
+  state.avatars.splice(j,1);
+  state.avatars.splice(i,1,evolved);
+  state.selected=[];
+  const t=TYPES[evolved.type];
+  $("message").textContent=`MERGE SUCCESS! ${t.name} evolved to Level ${evolved.level}!`;
+  render();
+};
+$("battleBtn").onclick=()=>{
+  const strongest=[...state.avatars].sort((a,b)=>power(b)-power(a))[0];
+  if(!strongest){ $("battleMessage").textContent="Open an egg first."; return; }
+  const hero=power(strongest);
+  const enemy=Math.round(150*Math.pow(1.35,state.level-1)+Math.random()*80);
+  $("enemyPower").textContent=enemy;
+  const enemyNames=["Void Beast","Iron Fang","Frost Knight","Shadow Titan","Cyber Dragon"];
+  $("enemyName").textContent=enemyNames[Math.min(state.level-1,enemyNames.length-1)];
+  $("heroHp").style.width="100%"; $("enemyHp").style.width="100%";
+  $("battleMessage").textContent="Battle started!";
+  setTimeout(()=>{
+    if(hero + Math.random()*120 >= enemy){
+      $("enemyHp").style.width="0%";
+      const reward=180+state.level*35;
+      state.coins+=reward;
+      if(Math.random()>.6) state.gems+=2;
+      state.level++;
+      $("battleMessage").textContent=`VICTORY! You won ${reward} coins.`;
+    }else{
+      $("heroHp").style.width="0%";
+      $("battleMessage").textContent="Defeated! Merge stronger avatars and try again.";
+    }
+    render();
+  },650);
+};
+render();
+</script>
+</body>
+</html>
