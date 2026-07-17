@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Carlos & Lucas X Games ⚡</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; }
+  body {
+    font-family:'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(160deg,#0f1330 0%,#1a2151 50%,#0d1b3e 100%);
+    color:#fff; min-height:100vh; display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  .screen { width:100%; max-width:560px; padding:14px; }
+  .hidden { display:none !important; }
+  h1 { font-size:38px; text-align:center; margin-bottom:6px; text-shadow:0 4px 0 rgba(0,0,0,.4); }
+  .sub { font-size:16px; opacity:.85; margin-bottom:20px; text-align:center; }
+
+  /* ===== BUTTONS ===== */
+  .bigbtn {
+    font-size:24px; font-weight:900; padding:15px 40px; border-radius:18px; border:none; cursor:pointer;
+    color:#1a1a2e; background:linear-gradient(180deg,#ffe066,#ffb32c);
+    box-shadow:0 7px 0 #b3720a; transition:transform .06s; display:block; margin:0 auto;
+  }
+  .bigbtn:active { transform:translateY(5px); box-shadow:0 2px 0 #b3720a; }
+  .bigbtn:disabled { filter:grayscale(1); opacity:.5; cursor:not-allowed; }
+  .smallbtn {
+    font-size:16px; font-weight:700; padding:10px 22px; border-radius:12px; border:none; cursor:pointer;
+    color:#fff; background:rgba(255,255,255,.15); margin:6px;
+  }
+
+  /* ===== PLAYER SELECT ===== */
+  .pcards { display:flex; gap:14px; margin-bottom:18px; }
+  .pcard {
+    flex:1; border-radius:20px; padding:16px 10px 14px; text-align:center; cursor:pointer;
+    border:3px solid; transition:transform .1s;
+  }
+  .pcard:active { transform:scale(.96); }
+  .pcard.carlos { background:linear-gradient(170deg,#3a1020,#24101c); border-color:#ff4a5a; box-shadow:0 0 24px rgba(255,74,90,.3); }
+  .pcard.lucas  { background:linear-gradient(170deg,#101c3a,#0d1430); border-color:#3a7bff; box-shadow:0 0 24px rgba(58,123,255,.3); }
+  .pcard .pname { font-size:24px; font-weight:900; margin:6px 0 8px; letter-spacing:1px; }
+  .pcard.carlos .pname { color:#ff6a7a; }
+  .pcard.lucas  .pname { color:#6aa2ff; }
+  .pstats { font-size:13px; line-height:1.8; opacity:.9; }
+  .playAs {
+    margin-top:10px; font-size:16px; font-weight:800; padding:10px 0; width:100%; border-radius:12px;
+    border:none; cursor:pointer; color:#fff;
+  }
+  .pcard.carlos .playAs { background:linear-gradient(180deg,#ff5a6a,#c92438); box-shadow:0 4px 0 #7f1622; }
+  .pcard.lucas  .playAs { background:linear-gradient(180deg,#3a7bff,#2450c9); box-shadow:0 4px 0 #16327f; }
+
+  #champBtn {
+    width:100%; font-size:22px; font-weight:900; padding:16px 0; border-radius:18px; border:none; cursor:pointer;
+    color:#1a1a2e; background:linear-gradient(180deg,#ffe066,#ff8a3c);
+    box-shadow:0 7px 0 #a34a0a;
+  }
+  #champBtn:disabled { filter:grayscale(.9); opacity:.55; }
+  #champLock { text-align:center; font-size:13px; opacity:.75; margin-top:8px; }
+
+  /* ===== DASHBOARD ===== */
+  .dash { display:flex; justify-content:space-between; gap:8px; margin-bottom:14px; }
+  .stat {
+    flex:1; background:rgba(255,255,255,.08); border:2px solid rgba(255,255,255,.15);
+    border-radius:14px; padding:8px 6px; text-align:center;
+  }
+  .stat .label { font-size:11px; letter-spacing:1px; opacity:.7; text-transform:uppercase; }
+  .stat .val { font-size:22px; font-weight:800; }
+  #scoreVal { color:#ffd54a; }
+  #streakVal { color:#ff8a3c; }
+  #livesVal { font-size:18px; letter-spacing:1px; }
+  #avVal { color:#7cf2a4; }
+
+  /* ===== TIMER ===== */
+  .timerWrap {
+    height:18px; background:rgba(255,255,255,.1); border-radius:10px; overflow:hidden;
+    margin-bottom:16px; border:2px solid rgba(255,255,255,.15);
+  }
+  .timerBar {
+    height:100%; width:100%;
+    background:linear-gradient(90deg,#38e07b,#ffd54a,#ff5a5a);
+    border-radius:8px; transform-origin:left;
+  }
+
+  /* ===== QUESTION / ANSWERS ===== */
+  .qBox {
+    text-align:center; background:rgba(255,255,255,.06); border:3px solid #4a5aff;
+    border-radius:22px; padding:22px 10px; margin-bottom:16px;
+    box-shadow:0 0 30px rgba(74,90,255,.35);
+  }
+  .qBox .q { font-size:54px; font-weight:900; letter-spacing:3px; text-shadow:0 4px 0 rgba(0,0,0,.35); }
+  .answers { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .ans {
+    font-size:32px; font-weight:800; padding:18px 0; border-radius:18px; border:none; cursor:pointer;
+    color:#fff; background:linear-gradient(180deg,#3a7bff,#2450c9);
+    box-shadow:0 6px 0 #16327f; transition:transform .06s;
+  }
+  .ans:active { transform:translateY(4px); box-shadow:0 2px 0 #16327f; }
+  .ans.correct { background:linear-gradient(180deg,#3ce07b,#1ca551); box-shadow:0 6px 0 #0d6b32; }
+  .ans.wrong { background:linear-gradient(180deg,#ff5a5a,#c92424); box-shadow:0 6px 0 #7f1616; }
+
+  /* ===== OVERLAYS ===== */
+  .overlay {
+    position:fixed; inset:0; background:rgba(8,10,30,.93); display:flex;
+    align-items:center; justify-content:center; flex-direction:column; z-index:50; text-align:center; padding:20px;
+  }
+  #unlockCard, #weaponCard {
+    background:linear-gradient(160deg,#243158,#141c3d); border:3px solid #ffd54a; border-radius:24px;
+    padding:26px 38px; box-shadow:0 0 60px rgba(255,213,74,.4);
+    animation:popIn .4s cubic-bezier(.2,1.6,.4,1);
+  }
+  #weaponCard { border-color:#ff5a5a; box-shadow:0 0 60px rgba(255,90,90,.5); }
+  @keyframes popIn { 0%{transform:scale(.3);} 100%{transform:scale(1);} }
+  .avName { font-size:24px; font-weight:900; color:#ffd54a; margin-top:10px; }
+  .avRarity { font-size:13px; letter-spacing:2px; text-transform:uppercase; opacity:.8; margin-top:4px; }
+  #collection { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:14px 0 20px; max-width:480px; max-height:180px; overflow-y:auto; }
+  #collection svg { filter:drop-shadow(0 3px 4px rgba(0,0,0,.5)); }
+
+  /* ===== BOMB ===== */
+  #bombLayer { position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+  #bomb { font-size:110px; animation:drop .5s ease-in forwards; }
+  @keyframes drop { 0%{transform:translateY(-60vh) rotate(-30deg);} 100%{transform:translateY(0) rotate(0);} }
+  #boom { font-size:150px; animation:boomAnim .6s ease-out forwards; position:absolute; }
+  @keyframes boomAnim { 0%{transform:scale(.2);opacity:1;} 70%{transform:scale(1.6);opacity:1;} 100%{transform:scale(2.2);opacity:0;} }
+  .shake { animation:shakeAnim .5s; }
+  @keyframes shakeAnim {
+    0%,100%{transform:translate(0,0);} 20%{transform:translate(-12px,6px);}
+    40%{transform:translate(10px,-8px);} 60%{transform:translate(-8px,-4px);} 80%{transform:translate(8px,6px);}
+  }
+
+  #feedback {
+    position:fixed; top:16%; left:0; right:0; text-align:center; font-size:42px; font-weight:900;
+    pointer-events:none; z-index:40; text-shadow:0 4px 0 rgba(0,0,0,.4); opacity:0;
+  }
+  #feedback.show { animation:fb .7s ease-out; }
+  @keyframes fb { 0%{opacity:0; transform:scale(.5);} 30%{opacity:1; transform:scale(1.2);} 100%{opacity:0; transform:scale(1) translateY(-40px);} }
+
+  /* ===== BATTLE ===== */
+  .fighters { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:10px; }
+  .fighter { flex:1; text-align:center; border-radius:16px; padding:8px 4px; border:3px solid transparent; }
+  .fighter.active-carlos { border-color:#ff4a5a; background:rgba(255,74,90,.12); }
+  .fighter.active-lucas  { border-color:#3a7bff; background:rgba(58,123,255,.12); }
+  .fighter .fname { font-weight:900; font-size:17px; }
+  .fighter .weapon { font-size:13px; opacity:.85; }
+  .hpWrap { height:14px; background:rgba(255,255,255,.12); border-radius:8px; overflow:hidden; margin-top:6px; }
+  .hpBar { height:100%; border-radius:8px; transition:width .4s; }
+  #hpC .hpBar { background:linear-gradient(90deg,#ff8a3c,#ff4a5a); }
+  #hpL .hpBar { background:linear-gradient(90deg,#4ab3ff,#3a7bff); }
+  .hpNum { font-size:12px; font-weight:800; margin-top:3px; }
+  #vsBadge { font-size:26px; font-weight:900; padding-top:34px; color:#ffd54a; }
+  #turnBanner {
+    text-align:center; font-size:20px; font-weight:900; letter-spacing:1px; margin-bottom:10px;
+    border-radius:12px; padding:8px;
+  }
+  #turnBanner.carlos { background:rgba(255,74,90,.18); color:#ff8a94; }
+  #turnBanner.lucas  { background:rgba(58,123,255,.18); color:#8ab2ff; }
+  .dmgPop {
+    position:fixed; font-size:44px; font-weight:900; z-index:70; pointer-events:none;
+    animation:dmgAnim .9s ease-out forwards; text-shadow:0 3px 0 rgba(0,0,0,.5);
+  }
+  @keyframes dmgAnim { 0%{opacity:0; transform:scale(.4);} 25%{opacity:1; transform:scale(1.4);} 100%{opacity:0; transform:scale(1) translateY(-70px);} }
+  .flyWeapon {
+    position:fixed; font-size:60px; z-index:70; pointer-events:none; top:22%;
+    animation:fly .5s linear forwards;
+  }
+  @keyframes fly { 0%{opacity:1;} 100%{opacity:1; transform:translateX(var(--dx)) rotate(720deg);} }
+
+  #confetti span {
+    position:fixed; top:-5vh; font-size:26px; z-index:45; pointer-events:none;
+    animation:fall linear forwards;
+  }
+  @keyframes fall { 100% { transform:translateY(115vh) rotate(600deg); } }
+</style>
+</head>
+<body>
+
+<!-- ============ PLAYER SELECT / MENU ============ -->
+<div class="screen" id="menuScreen">
+  <h1>⚡ CARLOS &amp; LUCAS<br>X GAMES ⚡</h1>
+  <p class="sub">Train your multiplication power. Collect avatars.<br>Unlock <b>10 avatars</b> to get ⚔️ SURPRISE WEAPONS &amp; fight for the 🏆 CHAMPIONSHIP!</p>
+  <div class="pcards">
+    <div class="pcard carlos" onclick="startSolo('carlos')">
+      <div id="cAvatar"></div>
+      <div class="pname">CARLOS</div>
+      <div class="pstats" id="cStats"></div>
+      <button class="playAs">▶ PLAY</button>
+    </div>
+    <div class="pcard lucas" onclick="startSolo('lucas')">
+      <div id="lAvatar"></div>
+      <div class="pname">LUCAS</div>
+      <div class="pstats" id="lStats"></div>
+      <button class="playAs">▶ PLAY</button>
+    </div>
+  </div>
+  <button id="champBtn" onclick="startBattle()">⚔️ CHAMPIONSHIP BATTLE 🏆</button>
+  <div id="champLock"></div>
+</div>
+
+<!-- ============ SOLO GAME ============ -->
+<div class="screen hidden" id="soloScreen">
+  <div class="dash">
+    <div class="stat"><div class="label" id="playerLabel">Player</div><div class="val" id="scoreVal">0</div></div>
+    <div class="stat"><div class="label">Streak</div><div class="val" id="streakVal">0🔥</div></div>
+    <div class="stat"><div class="label">Lives</div><div class="val" id="livesVal">💣💣💣</div></div>
+    <div class="stat"><div class="label">Avatars</div><div class="val" id="avVal">0</div></div>
+  </div>
+  <div class="timerWrap"><div class="timerBar" id="soloTimer"></div></div>
+  <div class="qBox"><div class="q" id="soloQ">4 × 7</div></div>
+  <div class="answers" id="soloAnswers"></div>
+</div>
+
+<!-- ============ BATTLE ============ -->
+<div class="screen hidden" id="battleScreen">
+  <div class="fighters">
+    <div class="fighter" id="fC">
+      <div id="battleAvC"></div>
+      <div class="fname" style="color:#ff6a7a;">CARLOS</div>
+      <div class="weapon" id="wC"></div>
+      <div class="hpWrap" id="hpC"><div class="hpBar" style="width:100%"></div></div>
+      <div class="hpNum" id="hpCn">100 HP</div>
+    </div>
+    <div id="vsBadge">VS</div>
+    <div class="fighter" id="fL">
+      <div id="battleAvL"></div>
+      <div class="fname" style="color:#6aa2ff;">LUCAS</div>
+      <div class="weapon" id="wL"></div>
+      <div class="hpWrap" id="hpL"><div class="hpBar" style="width:100%"></div></div>
+      <div class="hpNum" id="hpLn">100 HP</div>
+    </div>
+  </div>
+  <div id="turnBanner"></div>
+  <div class="timerWrap"><div class="timerBar" id="battleTimer"></div></div>
+  <div class="qBox"><div class="q" id="battleQ">4 × 7</div></div>
+  <div class="answers" id="battleAnswers"></div>
+</div>
+
+<div id="feedback"></div>
+
+<!-- ============ AVATAR UNLOCK ============ -->
+<div class="overlay hidden" id="unlockScreen">
+  <div id="unlockCard">
+    <div style="font-size:19px;letter-spacing:3px;color:#7cf2a4;font-weight:800;">🎉 NEW AVATAR UNLOCKED! 🎉</div>
+    <div id="unlockAvatar" style="margin-top:12px;"></div>
+    <div class="avName" id="unlockName"></div>
+    <div class="avRarity" id="unlockRarity"></div>
+  </div>
+</div>
+
+<!-- ============ WEAPON UNLOCK ============ -->
+<div class="overlay hidden" id="weaponScreen">
+  <div id="weaponCard">
+    <div style="font-size:19px;letter-spacing:3px;color:#ff8a3c;font-weight:800;">⚔️ SURPRISE WEAPON UNLOCKED! ⚔️</div>
+    <div id="weaponEmoji" style="font-size:90px;margin:10px 0;"></div>
+    <div class="avName" id="weaponName"></div>
+    <div class="avRarity" id="weaponPower"></div>
+    <div id="battleUnlockedMsg" style="margin-top:12px;font-size:15px;color:#7cf2a4;font-weight:800;"></div>
+  </div>
+</div>
+
+<!-- ============ GAME OVER ============ -->
+<div class="overlay hidden" id="overScreen">
+  <h1>💥 GAME OVER 💥</h1>
+  <p class="sub">Score: <b id="finalScore" style="color:#ffd54a;font-size:24px;">0</b>
+  &nbsp;·&nbsp; Best: <b id="bestScore" style="color:#7cf2a4;">0</b><br>
+  <span id="finalMsg"></span></p>
+  <div style="font-size:14px;letter-spacing:2px;opacity:.7;" id="squadTitle">AVATAR SQUAD</div>
+  <div id="collection"></div>
+  <div>
+    <button class="bigbtn" onclick="startSolo(curPlayer)">🔄 PLAY AGAIN</button>
+    <button class="smallbtn" onclick="goMenu()">🏠 MENU</button>
+  </div>
+</div>
+
+<!-- ============ CHAMPION ============ -->
+<div class="overlay hidden" id="champScreen">
+  <div id="confetti"></div>
+  <div style="font-size:80px;">🏆</div>
+  <h1 id="champName" style="font-size:46px;"></h1>
+  <p class="sub" style="font-size:22px;font-weight:900;color:#ffd54a;">IS THE CHAMPION!</p>
+  <div id="champAvatar" style="margin-bottom:14px;"></div>
+  <p class="sub" id="champRecord"></p>
+  <div>
+    <button class="bigbtn" onclick="startBattle()">⚔️ REMATCH</button>
+    <button class="smallbtn" onclick="goMenu()">🏠 MENU</button>
+  </div>
+</div>
+
+<script>
+/* ================= AVATARS ================= */
+const AVATARS = [
+  {name:"Noob Rookie",     rarity:"Common",    skin:"#ffd23e", shirt:"#3a7bff", pants:"#2e7d32", face:"smile"},
+  {name:"Blaze Runner",    rarity:"Common",    skin:"#ffd23e", shirt:"#ff5a3c", pants:"#333",    face:"smile"},
+  {name:"Shadow Ninja",    rarity:"Rare",      skin:"#c9a13b", shirt:"#222",    pants:"#111",    face:"ninja"},
+  {name:"Captain Zap",     rarity:"Rare",      skin:"#ffd23e", shirt:"#ffd54a", pants:"#3a7bff", face:"cool"},
+  {name:"Frost Golem",     rarity:"Rare",      skin:"#9fd8ff", shirt:"#4ab3ff", pants:"#1c5a8f", face:"smile"},
+  {name:"Zombie Blox",     rarity:"Epic",      skin:"#7ccf6e", shirt:"#4a3728", pants:"#2b2b2b", face:"zombie"},
+  {name:"Robo X-9000",     rarity:"Epic",      skin:"#b8c4d0", shirt:"#5a6b7f", pants:"#3a4550", face:"robot"},
+  {name:"Lava King",       rarity:"Epic",      skin:"#ff8c3c", shirt:"#c92424", pants:"#7f1616", face:"angry"},
+  {name:"Galaxy Ghost",    rarity:"Legendary", skin:"#c9b6ff", shirt:"#6a3cff", pants:"#3d1f9e", face:"cool"},
+  {name:"Golden Titan",    rarity:"Legendary", skin:"#ffe066", shirt:"#ffb32c", pants:"#b3720a", face:"cool"},
+  {name:"Dark Overlord",   rarity:"Legendary", skin:"#8a8a9e", shirt:"#1a1030", pants:"#0d0820", face:"angry"},
+  {name:"Cyber Ninja",     rarity:"Rare",      skin:"#c9a13b", shirt:"#0d2a5e", pants:"#08183a", face:"ninja", hat:"band", hatCol:"#4affea"},
+  {name:"Pirate Pete",     rarity:"Rare",      skin:"#ffd23e", shirt:"#5a3b1e", pants:"#2b2b2b", face:"pirate", hat:"bandana", hatCol:"#c92424"},
+  {name:"Alien Zorg",      rarity:"Epic",      skin:"#7ce07b", shirt:"#3d1f9e", pants:"#222",    face:"alien"},
+  {name:"Ice Wizard",      rarity:"Epic",      skin:"#cfe8ff", shirt:"#4ab3ff", pants:"#1c5a8f", face:"smile", hat:"wizard", hatCol:"#2450c9"},
+  {name:"Crimson Knight",  rarity:"Epic",      skin:"#ffd23e", shirt:"#8f8f9e", pants:"#5a5a6b", face:"angry", hat:"helmet", hatCol:"#9aa0ad"},
+  {name:"Mega Mech",       rarity:"Epic",      skin:"#e0c060", shirt:"#c9a13b", pants:"#4a4a5a", face:"robot", hat:"cap", hatCol:"#333"},
+  {name:"Toxic Slime",     rarity:"Epic",      skin:"#a8e063", shirt:"#3c7d1e", pants:"#1e4a0d", face:"zombie"},
+  {name:"Angel Blox",      rarity:"Legendary", skin:"#fff2c9", shirt:"#ffffff", pants:"#dfe8ff", face:"smile", hat:"halo"},
+  {name:"Demon Lord",      rarity:"Legendary", skin:"#e05a5a", shirt:"#3a0d0d", pants:"#1a0505", face:"angry", hat:"horns"},
+  {name:"KING CARLOS",     rarity:"MYTHIC",    skin:"#ffd23e", shirt:"#c92424", pants:"#222",    face:"cool", hat:"crown"},
+  {name:"KING LUCAS",      rarity:"MYTHIC",    skin:"#ffd23e", shirt:"#3a7bff", pants:"#222",    face:"cool", hat:"crown"},
+  {name:"RAINBOW MASTER",  rarity:"MYTHIC",    skin:"#ffd23e", shirt:"rainbow", pants:"#222",    face:"cool", hat:"crown"},
+];
+
+/* ================= WEAPONS (surprise unlocks!) ================= */
+const WEAPON_THRESHOLDS = [10, 13, 16, 19, 23]; // avatars needed
+const WEAPONS = [
+  {name:"Wooden Sword",       emoji:"🗡️", dmg:12},
+  {name:"Laser Blaster",      emoji:"🔫", dmg:15},
+  {name:"Thunder Hammer",     emoji:"🔨", dmg:18},
+  {name:"Fire Dragon Staff",  emoji:"🔥", dmg:21},
+  {name:"DIAMOND DOOM BLADE", emoji:"💎", dmg:25},
+];
+const weaponsOf = p => WEAPONS.filter((w,i)=>p.avatars >= WEAPON_THRESHOLDS[i]);
+const bestWeapon = p => { const ws = weaponsOf(p); return ws[ws.length-1] || null; };
+
+function avatarSVG(a, size=110){
+  const shirt = a.shirt==="rainbow"
+    ? `<defs><linearGradient id="rb" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ff5a5a"/><stop offset="25%" stop-color="#ffd54a"/>
+        <stop offset="50%" stop-color="#3ce07b"/><stop offset="75%" stop-color="#3a7bff"/>
+        <stop offset="100%" stop-color="#b45aff"/></linearGradient></defs>` : "";
+  const shirtFill = a.shirt==="rainbow" ? "url(#rb)" : a.shirt;
+  let face = "";
+  if(a.face==="smile") face = `<circle cx="42" cy="22" r="3.5" fill="#222"/><circle cx="68" cy="22" r="3.5" fill="#222"/><path d="M42 34 Q55 44 68 34" stroke="#222" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  if(a.face==="cool")  face = `<rect x="34" y="17" width="18" height="9" rx="2" fill="#111"/><rect x="58" y="17" width="18" height="9" rx="2" fill="#111"/><rect x="52" y="19" width="6" height="4" fill="#111"/><path d="M44 36 Q55 43 66 36" stroke="#222" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  if(a.face==="ninja") face = `<rect x="30" y="14" width="50" height="14" rx="4" fill="#3a3a3a"/><circle cx="43" cy="21" r="3.5" fill="#fff"/><circle cx="67" cy="21" r="3.5" fill="#fff"/>`;
+  if(a.face==="zombie")face = `<circle cx="42" cy="22" r="4" fill="#fff"/><circle cx="42" cy="22" r="2" fill="#a00"/><circle cx="68" cy="22" r="3.5" fill="#222"/><path d="M42 36 L50 33 L58 37 L68 33" stroke="#222" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+  if(a.face==="robot") face = `<rect x="36" y="17" width="12" height="10" fill="#4affea"/><rect x="62" y="17" width="12" height="10" fill="#4affea"/><rect x="42" y="34" width="26" height="5" fill="#333"/>`;
+  if(a.face==="angry") face = `<path d="M36 15 L50 21" stroke="#222" stroke-width="4" stroke-linecap="round"/><path d="M74 15 L60 21" stroke="#222" stroke-width="4" stroke-linecap="round"/><circle cx="43" cy="24" r="3.5" fill="#222"/><circle cx="67" cy="24" r="3.5" fill="#222"/><path d="M44 39 Q55 33 66 39" stroke="#222" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  if(a.face==="pirate")face = `<circle cx="42" cy="22" r="3.5" fill="#222"/><circle cx="68" cy="22" r="8" fill="#111"/><path d="M27 14 L83 26" stroke="#111" stroke-width="3"/><path d="M42 34 Q55 44 68 34" stroke="#222" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  if(a.face==="alien") face = `<ellipse cx="42" cy="22" rx="7" ry="10" fill="#111"/><ellipse cx="68" cy="22" rx="7" ry="10" fill="#111"/><ellipse cx="44" cy="19" rx="2" ry="3" fill="#7cf2a4"/><ellipse cx="70" cy="19" rx="2" ry="3" fill="#7cf2a4"/><path d="M48 39 Q55 43 62 39" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  const hc = a.hatCol || "#ffd54a";
+  let hat = "";
+  if(a.hat==="crown")  hat = `<path d="M31 4 L31 -16 L43 -5 L55 -20 L67 -5 L79 -16 L79 4 Z" fill="#ffd54a" stroke="#b3720a" stroke-width="2"/><circle cx="55" cy="-13" r="3" fill="#ff5a5a"/>`;
+  if(a.hat==="cap")    hat = `<path d="M27 4 Q55 -22 83 4 Z" fill="${hc}"/><rect x="55" y="-3" width="36" height="8" rx="4" fill="${hc}"/>`;
+  if(a.hat==="halo")   hat = `<ellipse cx="55" cy="-12" rx="22" ry="6" fill="none" stroke="#ffe066" stroke-width="5"/>`;
+  if(a.hat==="horns")  hat = `<path d="M34 6 Q25 -12 37 -19 Q36 -6 43 3 Z" fill="#8b0000"/><path d="M76 6 Q85 -12 73 -19 Q74 -6 67 3 Z" fill="#8b0000"/>`;
+  if(a.hat==="wizard") hat = `<path d="M55 -28 L31 6 L79 6 Z" fill="${hc}"/><circle cx="55" cy="-24" r="4" fill="#ffd54a"/><circle cx="48" cy="-6" r="2.5" fill="#ffd54a"/><circle cx="62" cy="-12" r="2.5" fill="#ffd54a"/>`;
+  if(a.hat==="helmet") hat = `<path d="M27 8 Q55 -20 83 8 L83 13 L27 13 Z" fill="${hc}"/><rect x="50" y="-15" width="10" height="10" rx="2" fill="#c92424"/>`;
+  if(a.hat==="bandana")hat = `<path d="M27 12 Q55 -12 83 12 L83 15 L27 15 Z" fill="${hc}"/><path d="M83 13 Q95 18 90 28 L84 18 Z" fill="${hc}"/>`;
+  if(a.hat==="band")   hat = `<rect x="26" y="0" width="58" height="9" rx="4" fill="${hc}"/><path d="M83 4 Q96 8 92 18 L84 9 Z" fill="${hc}"/>`;
+  return `<svg width="${size}" height="${size}" viewBox="0 -24 110 154">${shirt}
+    <rect x="27" y="2" width="56" height="48" rx="9" fill="${a.skin}"/>${face}${hat}
+    <rect x="22" y="54" width="66" height="42" rx="7" fill="${shirtFill}"/>
+    <rect x="4"  y="54" width="15" height="40" rx="6" fill="${a.skin}"/>
+    <rect x="91" y="54" width="15" height="40" rx="6" fill="${a.skin}"/>
+    <rect x="26" y="99" width="25" height="29" rx="5" fill="${a.pants}"/>
+    <rect x="59" y="99" width="25" height="29" rx="5" fill="${a.pants}"/>
+  </svg>`;
+}
+const latestAvatar = p => AVATARS[Math.max(0, Math.min(p.avatars, AVATARS.length) - 1)] || AVATARS[0];
+
+/* ================= SOUND ================= */
+let AC;
+function beep(freq, dur, type="square", vol=.15){
+  try{
+    AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+    const o=AC.createOscillator(), g=AC.createGain();
+    o.type=type; o.frequency.value=freq; g.gain.value=vol;
+    o.connect(g); g.connect(AC.destination);
+    o.start(); g.gain.exponentialRampToValueAtTime(.001, AC.currentTime+dur);
+    o.stop(AC.currentTime+dur);
+  }catch(e){}
+}
+const sndRight = ()=>{ beep(660,.12); setTimeout(()=>beep(880,.15),100); };
+const sndWrong = ()=>{ beep(160,.4,"sawtooth",.2); };
+const sndBoom  = ()=>{ beep(80,.6,"sawtooth",.3); beep(50,.7,"sawtooth",.3); };
+const sndUnlock= ()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.18,"triangle",.2), i*110)); };
+const sndTick  = ()=>{ beep(1200,.05,"sine",.06); };
+const sndHit   = ()=>{ beep(220,.15,"sawtooth",.25); setTimeout(()=>beep(110,.2,"sawtooth",.2),80); };
+const sndFanfare=()=>{ [523,659,784,1047,784,1047,1319].forEach((f,i)=>setTimeout(()=>beep(f,.22,"triangle",.22), i*160)); };
+
+/* ================= PROFILES (saved on this device) ================= */
+function loadP(key, name){
+  try{
+    const d = JSON.parse(localStorage.getItem("cxg_"+key));
+    if(d) return d;
+  }catch(e){}
+  return {key, name, best:0, totalCorrect:0, avatars:0, champs:0};
+}
+function saveP(p){ try{ localStorage.setItem("cxg_"+p.key, JSON.stringify(p)); }catch(e){} }
+const P = { carlos: loadP("carlos","CARLOS"), lucas: loadP("lucas","LUCAS") };
+
+const $ = id => document.getElementById(id);
+const BATTLE_NEED = 10;
+
+/* ================= MENU ================= */
+function goMenu(){
+  ["soloScreen","battleScreen","overScreen","champScreen","unlockScreen","weaponScreen"].forEach(s=>$(s).classList.add("hidden"));
+  $("menuScreen").classList.remove("hidden");
+  renderMenu();
+}
+function statsHTML(p){
+  const w = weaponsOf(p);
+  return `🏅 Best: <b>${p.best}</b><br>🧱 Avatars: <b>${p.avatars}/${AVATARS.length}</b><br>` +
+         `⚔️ Weapons: <b>${w.length ? w.map(x=>x.emoji).join("") : "🔒"}</b><br>🏆 Titles: <b>${p.champs}</b>`;
+}
+function renderMenu(){
+  $("cAvatar").innerHTML = avatarSVG(latestAvatar(P.carlos), 84);
+  $("lAvatar").innerHTML = avatarSVG(latestAvatar(P.lucas), 84);
+  $("cStats").innerHTML = statsHTML(P.carlos);
+  $("lStats").innerHTML = statsHTML(P.lucas);
+  const cOK = P.carlos.avatars >= BATTLE_NEED, lOK = P.lucas.avatars >= BATTLE_NEED;
+  $("champBtn").disabled = !(cOK && lOK);
+  $("champLock").innerHTML = (cOK && lOK)
+    ? "⚡ Both warriors are armed. FIGHT!"
+    : `🔒 Need ${BATTLE_NEED} avatars each to fight — Carlos ${P.carlos.avatars}/${BATTLE_NEED} · Lucas ${P.lucas.avatars}/${BATTLE_NEED}`;
+}
+
+/* ================= SHARED QUESTION GEN ================= */
+const TIME_LIMIT = 3000;
+function makeQuestion(){
+  const a = 2 + Math.floor(Math.random()*8);
+  const b = 2 + Math.floor(Math.random()*8);
+  const ans = a*b;
+  const opts = new Set([ans]);
+  while(opts.size < 4){
+    const tricks = [
+      ans + (Math.random()<.5?-1:1) * (1+Math.floor(Math.random()*3)),
+      (a + (Math.random()<.5?-1:1)) * b,
+      a * (b + (Math.random()<.5?-1:1)),
+      a + b,
+    ];
+    const t = tricks[Math.floor(Math.random()*tricks.length)];
+    if(t>0 && t!==ans) opts.add(t);
+  }
+  return {text:`${a} × ${b}`, ans, opts:[...opts].sort(()=>Math.random()-.5)};
+}
+function showFeedback(txt, color){
+  const f = $("feedback");
+  f.textContent = txt; f.style.color = color;
+  f.classList.remove("show"); void f.offsetWidth; f.classList.add("show");
+}
+function dropBomb(after){
+  const layer = document.createElement("div");
+  layer.id = "bombLayer";
+  layer.innerHTML = `<div id="bomb">💣</div>`;
+  document.body.appendChild(layer);
+  setTimeout(()=>{
+    sndBoom();
+    layer.innerHTML = `<div id="boom">💥</div>`;
+    document.body.classList.add("shake");
+  }, 520);
+  setTimeout(()=>{
+    layer.remove();
+    document.body.classList.remove("shake");
+    after();
+  }, 1250);
+}
+
+/* ================= SOLO MODE ================= */
+let curPlayer, score, streak, lives, curAnswer, timerRAF, deadline, locked=false, warned;
+
+function startSolo(who){
+  curPlayer = who;
+  score=0; streak=0; lives=3;
+  ["menuScreen","overScreen","champScreen"].forEach(s=>$(s).classList.add("hidden"));
+  $("soloScreen").classList.remove("hidden");
+  $("playerLabel").textContent = P[who].name + " · Score";
+  updateDash();
+  soloNext();
+}
+function updateDash(){
+  $("scoreVal").textContent = score;
+  $("streakVal").textContent = streak + "🔥";
+  $("livesVal").textContent = "💣".repeat(lives) + "▫️".repeat(3-lives);
+  $("avVal").textContent = P[curPlayer].avatars;
+}
+function soloNext(){
+  locked=false; warned=false;
+  const q = makeQuestion();
+  curAnswer = q.ans;
+  $("soloQ").textContent = q.text;
+  $("soloAnswers").innerHTML = "";
+  q.opts.forEach(v=>{
+    const btn = document.createElement("button");
+    btn.className="ans"; btn.textContent=v;
+    btn.onclick = ()=>soloAnswer(btn, v);
+    $("soloAnswers").appendChild(btn);
+  });
+  deadline = performance.now() + TIME_LIMIT;
+  cancelAnimationFrame(timerRAF);
+  soloTick();
+}
+function soloTick(){
+  const left = deadline - performance.now();
+  $("soloTimer").style.transform = `scaleX(${Math.max(0,left/TIME_LIMIT)})`;
+  if(left < 1000 && !warned){ warned=true; sndTick(); setTimeout(sndTick,300); setTimeout(sndTick,600); }
+  if(left <= 0){ if(!locked) soloFail(); return; }
+  timerRAF = requestAnimationFrame(soloTick);
+}
+function soloAnswer(btn, v){
+  if(locked) return;
+  locked = true;
+  cancelAnimationFrame(timerRAF);
+  const p = P[curPlayer];
+  if(v === curAnswer){
+    btn.classList.add("correct");
+    sndRight();
+    streak++;
+    p.totalCorrect++;
+    const timeLeft = Math.max(0, deadline - performance.now());
+    const pts = 10 + Math.round(timeLeft/1000*5) + streak*2;
+    score += pts;
+    showFeedback(streak>=3 ? `+${pts} 🔥 STREAK x${streak}!` : `+${pts} ✅`, "#3ce07b");
+    // avatar unlock every 5 total correct (progress saved forever)
+    let unlockedNow = false;
+    if(p.totalCorrect % 5 === 0 && p.avatars < AVATARS.length){
+      p.avatars++;
+      unlockedNow = true;
+    }
+    saveP(p);
+    updateDash();
+    if(unlockedNow) setTimeout(()=>showUnlock(p), 500);
+    else setTimeout(soloNext, 650);
+  } else {
+    btn.classList.add("wrong");
+    [...document.querySelectorAll("#soloAnswers .ans")].forEach(b=>{ if(+b.textContent===curAnswer) b.classList.add("correct"); });
+    soloFail();
+  }
+}
+function soloFail(){
+  locked = true;
+  cancelAnimationFrame(timerRAF);
+  streak = 0; lives--;
+  updateDash();
+  sndWrong();
+  dropBomb(()=>{ lives<=0 ? soloOver() : soloNext(); });
+}
+function showUnlock(p){
+  const av = AVATARS[p.avatars-1];
+  sndUnlock();
+  $("unlockAvatar").innerHTML = avatarSVG(av, 120);
+  $("unlockName").textContent = av.name;
+  $("unlockRarity").textContent = "★ " + av.rarity + " ★";
+  $("unlockScreen").classList.remove("hidden");
+  setTimeout(()=>{
+    $("unlockScreen").classList.add("hidden");
+    // did this avatar unlock a weapon?
+    const wi = WEAPON_THRESHOLDS.indexOf(p.avatars);
+    if(wi >= 0) showWeapon(p, wi);
+    else soloNext();
+  }, 2100);
+}
+function showWeapon(p, wi){
+  const w = WEAPONS[wi];
+  sndFanfare();
+  $("weaponEmoji").textContent = w.emoji;
+  $("weaponName").textContent = w.name;
+  $("weaponPower").textContent = "💥 POWER: " + w.dmg;
+  $("battleUnlockedMsg").textContent = (p.avatars === BATTLE_NEED)
+    ? "🏆 " + p.name + " CAN NOW FIGHT IN THE CHAMPIONSHIP! ⚔️" : "";
+  $("weaponScreen").classList.remove("hidden");
+  setTimeout(()=>{
+    $("weaponScreen").classList.add("hidden");
+    soloNext();
+  }, 2800);
+}
+function soloOver(){
+  const p = P[curPlayer];
+  p.best = Math.max(p.best, score);
+  saveP(p);
+  $("finalScore").textContent = score;
+  $("bestScore").textContent = p.best;
+  const msgs = [
+    [0,  "Keep training, warrior! 💪"],
+    [100,"Nice speed! Getting faster! ⚡"],
+    [250,"WOW! Multiplication machine! 🤖"],
+    [450,"LEGENDARY! You crushed it! 👑"],
+  ];
+  $("finalMsg").textContent = msgs.filter(m=>score>=m[0]).pop()[1];
+  $("squadTitle").textContent = p.name + "'S AVATAR SQUAD";
+  $("collection").innerHTML = p.avatars
+    ? AVATARS.slice(0, p.avatars).map(a=>`<div title="${a.name}">${avatarSVG(a,56)}</div>`).join("")
+    : `<div style="opacity:.6;font-size:15px;">No avatars yet — get 5 answers right to unlock one!</div>`;
+  $("overScreen").classList.remove("hidden");
+}
+
+/* ================= CHAMPIONSHIP BATTLE ================= */
+const MAX_HP = 100;
+let hp, turn, bAnswer, bDeadline, bRAF, bLocked, bWarned;
+
+function startBattle(){
+  if(P.carlos.avatars < BATTLE_NEED || P.lucas.avatars < BATTLE_NEED) return;
+  ["menuScreen","champScreen","overScreen"].forEach(s=>$(s).classList.add("hidden"));
+  $("battleScreen").classList.remove("hidden");
+  hp = {carlos:MAX_HP, lucas:MAX_HP};
+  turn = Math.random()<.5 ? "carlos" : "lucas";
+  $("battleAvC").innerHTML = avatarSVG(latestAvatar(P.carlos), 74);
+  $("battleAvL").innerHTML = avatarSVG(latestAvatar(P.lucas), 74);
+  $("wC").textContent = bestWeapon(P.carlos).emoji + " " + bestWeapon(P.carlos).name;
+  $("wL").textContent = bestWeapon(P.lucas).emoji + " " + bestWeapon(P.lucas).name;
+  updateHP();
+  battleNext();
+}
+function updateHP(){
+  $("hpC").firstElementChild.style.width = Math.max(0,hp.carlos) + "%";
+  $("hpL").firstElementChild.style.width = Math.max(0,hp.lucas) + "%";
+  $("hpCn").textContent = Math.max(0,hp.carlos) + " HP";
+  $("hpLn").textContent = Math.max(0,hp.lucas) + " HP";
+}
+function battleNext(){
+  bLocked=false; bWarned=false;
+  $("fC").className = "fighter" + (turn==="carlos" ? " active-carlos" : "");
+  $("fL").className = "fighter" + (turn==="lucas" ? " active-lucas" : "");
+  const tb = $("turnBanner");
+  tb.className = turn;
+  tb.textContent = "⚔️ " + P[turn].name + "'S TURN — ATTACK! ⚔️";
+  const q = makeQuestion();
+  bAnswer = q.ans;
+  $("battleQ").textContent = q.text;
+  $("battleAnswers").innerHTML = "";
+  q.opts.forEach(v=>{
+    const btn = document.createElement("button");
+    btn.className="ans"; btn.textContent=v;
+    btn.onclick = ()=>battleAnswer(btn, v);
+    $("battleAnswers").appendChild(btn);
+  });
+  bDeadline = performance.now() + TIME_LIMIT;
+  cancelAnimationFrame(bRAF);
+  battleTick();
+}
+function battleTick(){
+  const left = bDeadline - performance.now();
+  $("battleTimer").style.transform = `scaleX(${Math.max(0,left/TIME_LIMIT)})`;
+  if(left < 1000 && !bWarned){ bWarned=true; sndTick(); setTimeout(sndTick,300); setTimeout(sndTick,600); }
+  if(left <= 0){ if(!bLocked) battleMiss(); return; }
+  bRAF = requestAnimationFrame(battleTick);
+}
+function battleAnswer(btn, v){
+  if(bLocked) return;
+  bLocked = true;
+  cancelAnimationFrame(bRAF);
+  if(v === bAnswer){
+    btn.classList.add("correct");
+    sndRight();
+    const timeLeft = Math.max(0, bDeadline - performance.now());
+    const w = bestWeapon(P[turn]);
+    const dmg = w.dmg + Math.round(timeLeft/1000 * 4);   // speed bonus up to +12
+    attack(turn, dmg, w);
+  } else {
+    btn.classList.add("wrong");
+    [...document.querySelectorAll("#battleAnswers .ans")].forEach(b=>{ if(+b.textContent===bAnswer) b.classList.add("correct"); });
+    battleMiss();
+  }
+}
+function battleMiss(){
+  bLocked = true;
+  cancelAnimationFrame(bRAF);
+  sndWrong();
+  showFeedback("MISS! 💨", "#ff8a94");
+  setTimeout(()=>{ switchTurn(); }, 900);
+}
+function attack(attacker, dmg, w){
+  const defender = attacker==="carlos" ? "lucas" : "carlos";
+  // weapon flies across
+  const fly = document.createElement("div");
+  fly.className = "flyWeapon";
+  fly.textContent = w.emoji;
+  const fromLeft = attacker==="carlos";
+  fly.style.left = fromLeft ? "12%" : "auto";
+  fly.style.right = fromLeft ? "auto" : "12%";
+  fly.style.setProperty("--dx", (fromLeft?1:-1)*Math.min(window.innerWidth*.55, 320) + "px");
+  document.body.appendChild(fly);
+  setTimeout(()=>{
+    fly.remove();
+    sndHit();
+    hp[defender] -= dmg;
+    updateHP();
+    document.body.classList.add("shake");
+    setTimeout(()=>document.body.classList.remove("shake"), 500);
+    const pop = document.createElement("div");
+    pop.className = "dmgPop";
+    pop.textContent = "-" + dmg;
+    pop.style.color = defender==="carlos" ? "#ff6a7a" : "#6aa2ff";
+    pop.style.top = "20%";
+    pop.style.left = defender==="carlos" ? "18%" : "auto";
+    pop.style.right = defender==="carlos" ? "auto" : "18%";
+    document.body.appendChild(pop);
+    setTimeout(()=>pop.remove(), 950);
+    if(hp[defender] <= 0) setTimeout(()=>crownChampion(attacker), 800);
+    else setTimeout(switchTurn, 800);
+  }, 520);
+}
+function switchTurn(){
+  turn = turn==="carlos" ? "lucas" : "carlos";
+  battleNext();
+}
+function crownChampion(winner){
+  const p = P[winner];
+  p.champs++;
+  saveP(p);
+  $("battleScreen").classList.add("hidden");
+  $("champName").textContent = "👑 " + p.name + " 👑";
+  $("champName").style.color = winner==="carlos" ? "#ff6a7a" : "#6aa2ff";
+  $("champAvatar").innerHTML = avatarSVG(latestAvatar(p), 130);
+  $("champRecord").innerHTML = `🏆 Championships — Carlos: <b>${P.carlos.champs}</b> · Lucas: <b>${P.lucas.champs}</b>`;
+  // confetti
+  const c = $("confetti");
+  c.innerHTML = "";
+  const bits = ["🎉","⭐","🏆","🎊","✨","👑"];
+  for(let i=0;i<28;i++){
+    const s = document.createElement("span");
+    s.textContent = bits[Math.floor(Math.random()*bits.length)];
+    s.style.left = Math.random()*96 + "vw";
+    s.style.animationDuration = (2 + Math.random()*2.5) + "s";
+    s.style.animationDelay = Math.random()*1.2 + "s";
+    c.appendChild(s);
+  }
+  sndFanfare();
+  $("champScreen").classList.remove("hidden");
+}
+
+/* keyboard 1-4 */
+document.addEventListener("keydown", e=>{
+  const n = parseInt(e.key);
+  if(n>=1 && n<=4){
+    const active = !$("soloScreen").classList.contains("hidden") ? "#soloAnswers"
+                 : !$("battleScreen").classList.contains("hidden") ? "#battleAnswers" : null;
+    if(!active) return;
+    const overlayOpen = ["unlockScreen","weaponScreen","overScreen","champScreen"].some(s=>!$(s).classList.contains("hidden"));
+    if(overlayOpen) return;
+    const btns = document.querySelectorAll(active + " .ans");
+    if(btns[n-1]) btns[n-1].click();
+  }
+});
+
+renderMenu();
+</script>
+</body>
+</html>
