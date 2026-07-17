@@ -173,7 +173,17 @@
     animation:fall linear forwards;
   }
   @keyframes fall { 100% { transform:translateY(115vh) rotate(600deg); } }
+
+  /* ===== ONLINE LOBBY ===== */
+  #joinCode {
+    font-size:30px; font-weight:900; width:140px; text-align:center; border-radius:12px;
+    border:2px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#ffd54a;
+    padding:8px; letter-spacing:8px; outline:none;
+  }
+  .pickBtn { flex:1; font-size:20px !important; padding:14px 10px !important; }
+  .pickBtn:disabled { filter:grayscale(1); opacity:.4; }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.2/peerjs.min.js"></script>
 </head>
 <body>
 
@@ -216,11 +226,12 @@
 
 <!-- ============ SPEED DUEL ============ -->
 <div class="screen hidden" id="duelScreen">
-  <div class="duelHead">
+  <div class="duelHead" id="duelHead">
     <div class="duelSide carlos"><div class="dname" style="color:#ff6a7a;">CARLOS</div><div class="dtime" id="timeC">--</div></div>
     <div style="font-size:22px;font-weight:900;color:#ffd54a;">VS</div>
     <div class="duelSide lucas"><div class="dname" style="color:#6aa2ff;">LUCAS</div><div class="dtime" id="timeL">--</div></div>
   </div>
+  <div id="raceBoard" class="hidden" style="margin-bottom:10px;font-size:16px;background:rgba(255,255,255,.05);border-radius:14px;padding:6px 4px;"></div>
   <div id="stopwatch">0.0s</div>
   <div id="duelProgress">Question 1 / 10</div>
   <div class="timerWrap"><div class="timerBar" id="duelTimer"></div></div>
@@ -302,9 +313,42 @@
   <p class="sub" id="champRecord"></p>
   <p class="sub" id="champBossMsg" style="color:#c86aff;font-weight:800;"></p>
   <div>
-    <button class="bigbtn" onclick="startDuel()">⚔️ REMATCH</button>
+    <button class="bigbtn" onclick="document.getElementById('champScreen').classList.add('hidden');startDuel()">⚔️ REMATCH</button>
     <button class="smallbtn" onclick="goMenu()">🏠 MENU</button>
   </div>
+</div>
+
+<!-- ============ DUEL MODE PICKER ============ -->
+<div class="overlay hidden" id="duelModeScreen">
+  <h1>⚔️ SPEED DUEL</h1>
+  <p class="sub">10 questions — fastest total time wins!<br>Wrong or too slow = +5s penalty ⚠️</p>
+  <button class="bigbtn" onclick="openLobby()">📶 TWO iPADS — ONLINE</button>
+  <div style="height:12px;"></div>
+  <button class="bigbtn" id="localDuelBtn" onclick="startLocalDuel()">📱 ONE iPAD — TAKE TURNS</button>
+  <div id="localLockMsg" style="font-size:13px;opacity:.7;margin-top:8px;"></div>
+  <button class="smallbtn" onclick="goMenu()" style="margin-top:14px;">🏠 MENU</button>
+</div>
+
+<!-- ============ ONLINE LOBBY (multi-iPad room) ============ -->
+<div class="overlay hidden" id="lobbyScreen">
+  <h1>📶 ONLINE RACE</h1>
+  <p class="sub">Who plays on THIS iPad?</p>
+  <div style="display:flex;gap:12px;margin-bottom:10px;width:100%;max-width:400px;">
+    <button class="bigbtn pickBtn" id="pickC" style="background:linear-gradient(180deg,#ff5a6a,#c92438);color:#fff;box-shadow:0 7px 0 #7f1622;" onclick="lobbyPick('carlos')">CARLOS</button>
+    <button class="bigbtn pickBtn" id="pickL" style="background:linear-gradient(180deg,#3a7bff,#2450c9);color:#fff;box-shadow:0 7px 0 #16327f;" onclick="lobbyPick('lucas')">LUCAS</button>
+  </div>
+  <input id="guestName" maxlength="10" placeholder="…or type another name" oninput="net&&(net.picked=null);document.getElementById('pickC').style.opacity=1;document.getElementById('pickL').style.opacity=1;"
+    style="font-size:17px;font-weight:700;padding:10px 14px;border-radius:12px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;text-align:center;outline:none;margin-bottom:12px;">
+  <div id="lobbyActions" style="text-align:center;">
+    <button class="bigbtn" onclick="createRoom()">🎲 CREATE ROOM</button>
+    <p class="sub" style="margin:14px 0 8px;">— or enter the code from the host iPad —</p>
+    <input id="joinCode" inputmode="numeric" maxlength="4" placeholder="0000">
+    <button class="smallbtn" style="background:linear-gradient(180deg,#3ce07b,#1ca551);font-weight:900;" onclick="joinRoom()">JOIN ▶</button>
+  </div>
+  <div id="lobbyStatus" style="margin-top:14px;font-size:17px;line-height:1.6;"></div>
+  <div id="roster" style="margin-top:12px;font-size:16px;line-height:1.8;"></div>
+  <button class="bigbtn hidden" id="startRaceBtn" onclick="hostStartRace()" style="margin-top:14px;">🚀 START RACE</button>
+  <button class="smallbtn" onclick="cancelLobby()" style="margin-top:10px;">🏠 MENU</button>
 </div>
 
 <!-- ============ BOSS RESULT ============ -->
@@ -432,7 +476,7 @@ const P = { carlos: loadP("carlos","CARLOS"), lucas: loadP("lucas","LUCAS") };
 const $ = id => document.getElementById(id);
 const BATTLE_NEED = 10;
 const ALL_SCREENS = ["menuScreen","soloScreen","duelScreen","bossScreen"];
-const ALL_OVERLAYS = ["readyScreen","unlockScreen","weaponScreen","overScreen","champScreen","bossResultScreen"];
+const ALL_OVERLAYS = ["readyScreen","unlockScreen","weaponScreen","overScreen","champScreen","bossResultScreen","duelModeScreen","lobbyScreen"];
 function showScreen(id){
   ALL_SCREENS.forEach(s=>$(s).classList.toggle("hidden", s!==id));
   ALL_OVERLAYS.forEach(s=>$(s).classList.add("hidden"));
@@ -456,10 +500,10 @@ function renderMenu(){
   $("cStats").innerHTML = statsHTML(P.carlos);
   $("lStats").innerHTML = statsHTML(P.lucas);
   const cOK = P.carlos.avatars >= BATTLE_NEED, lOK = P.lucas.avatars >= BATTLE_NEED;
-  $("champBtn").disabled = !(cOK && lOK);
-  $("champLock").innerHTML = (cOK && lOK)
-    ? "⚡ 10 questions each — fastest total time wins! Wrong answer = +5s penalty"
-    : `🔒 Need ${BATTLE_NEED} avatars each — Carlos ${P.carlos.avatars}/${BATTLE_NEED} · Lucas ${P.lucas.avatars}/${BATTLE_NEED}`;
+  $("champBtn").disabled = !(cOK || lOK);
+  $("champLock").innerHTML = (cOK || lOK)
+    ? "⚡ Race online with other iPads, or take turns on this one!"
+    : `🔒 Need ${BATTLE_NEED} avatars to race — Carlos ${P.carlos.avatars}/${BATTLE_NEED} · Lucas ${P.lucas.avatars}/${BATTLE_NEED}`;
   $("bossC").disabled = P.carlos.champs < 1;
   $("bossL").disabled = P.lucas.champs < 1;
   $("bossC").textContent = P.carlos.champs < 1 ? "🔒 BOSS (win a duel)" : "🐲 BOSS FIGHT";
@@ -679,15 +723,18 @@ const PENALTY = 5;   // seconds added for wrong/timeout
 let duel;
 let dAnswer, dRAF, dDeadline, dLocked, dWarned;
 
-function startDuel(){
+function startLocalDuel(){
   if(P.carlos.avatars < BATTLE_NEED || P.lucas.avatars < BATTLE_NEED) return;
   duel = { order: Math.random()<.5 ? ["carlos","lucas"] : ["lucas","carlos"], idx:0, times:{} };
   showScreen("duelScreen");
+  $("duelHead").classList.remove("hidden");
+  $("raceBoard").classList.add("hidden");
   $("timeC").textContent = "--";
   $("timeL").textContent = "--";
   duelReady();
 }
 function duelReady(){
+  $("readyBtn").style.display = "";
   const who = duel.order[duel.idx];
   const other = who==="carlos" ? "lucas" : "carlos";
   $("readyName").textContent = (who==="carlos"?"🔴 ":"🔵 ") + P[who].name;
@@ -807,6 +854,310 @@ function duelFinish(){
   throwConfetti("confetti");
   sndFanfare();
   $("champScreen").classList.remove("hidden");
+}
+
+/* ================= DUEL MODE PICKER ================= */
+function startDuel(){
+  const bothOK = P.carlos.avatars>=BATTLE_NEED && P.lucas.avatars>=BATTLE_NEED;
+  $("localDuelBtn").disabled = !bothOK;
+  $("localLockMsg").textContent = bothOK ? "" : "🔒 One-iPad mode needs both players at 10 avatars on this iPad";
+  $("duelModeScreen").classList.remove("hidden");
+}
+
+/* ================= ONLINE MULTI-iPAD RACE (2-8 players) ================= */
+const MAX_PLAYERS = 8;
+let net = null;
+let oAnswer, oRAF, oDeadline, oLocked, oWarned;
+
+function openLobby(){
+  $("duelModeScreen").classList.add("hidden");
+  net = { picked:null, peer:null, conns:[], players:{}, isHost:false, racing:false, finished:false };
+  $("pickC").style.opacity = 1; $("pickL").style.opacity = 1;
+  $("pickC").disabled = P.carlos.avatars < BATTLE_NEED;
+  $("pickL").disabled = P.lucas.avatars < BATTLE_NEED;
+  $("guestName").value = "";
+  $("joinCode").value = "";
+  $("lobbyStatus").innerHTML = "";
+  $("roster").innerHTML = "";
+  $("startRaceBtn").classList.add("hidden");
+  $("lobbyScreen").classList.remove("hidden");
+}
+function lobbyPick(who){
+  net.picked = who;
+  $("guestName").value = "";
+  $("pickC").style.opacity = who==="carlos"?1:.35;
+  $("pickL").style.opacity = who==="lucas"?1:.35;
+}
+function myIdentity(){
+  const custom = $("guestName").value.trim();
+  if(custom) return {name: custom.toUpperCase().slice(0,10), key:null};
+  if(net.picked) return {name: P[net.picked].name, key: net.picked};
+  return null;
+}
+function lobbyStatus(h){ $("lobbyStatus").innerHTML = h; }
+function cancelLobby(){ try{ net && net.peer && net.peer.destroy(); }catch(e){} goMenu(); }
+
+function paintRoster(){
+  const list = Object.values(net.players);
+  $("roster").innerHTML = list.length
+    ? "<b>Players in room:</b><br>" + list.map(p=>"🎮 "+p.name).join("<br>")
+    : "";
+  if(net.isHost) $("startRaceBtn").classList.toggle("hidden", list.length < 2);
+}
+function hostBroadcast(m, exceptConn){
+  net.conns.forEach(c=>{ if(c!==exceptConn){ try{ c.send(m); }catch(e){} } });
+}
+function rosterMsg(){ return {t:"roster", players:Object.values(net.players).map(p=>({id:p.id,name:p.name}))}; }
+
+function createRoom(){
+  const me = myIdentity();
+  if(!me) return lobbyStatus("⚠️ Pick CARLOS / LUCAS or type a name first!");
+  if(!window.Peer) return lobbyStatus("⚠️ Network didn't load — check internet & refresh the page");
+  if(net.peer) return;
+  const code = String(1000+Math.floor(Math.random()*9000));
+  net.isHost = true; net.me = me; net.myId = "host";
+  net.players = { host: {id:"host", name:me.name, total:0, q:0, done:null} };
+  lobbyStatus("Creating room…");
+  net.peer = new Peer("cxg2026-"+code);
+  net.peer.on("open", ()=>{
+    lobbyStatus(`Room code: <b style="font-size:44px;color:#ffd54a;letter-spacing:6px;">${code}</b><br>Enter this code on the other iPads.`);
+    paintRoster();
+  });
+  net.peer.on("connection", c=>{
+    if(net.racing || net.conns.length >= MAX_PLAYERS-1){ try{c.close();}catch(e){} return; }
+    net.conns.push(c);
+    c.on("data", m=>hostOnData(c, m));
+    c.on("close", ()=>hostDrop(c));
+  });
+  net.peer.on("error", e=>{
+    net.peer = null;
+    lobbyStatus("⚠️ " + (e.type==="unavailable-id" ? "Code clash — press CREATE ROOM again" : "Connection error — try again"));
+  });
+}
+function hostOnData(c, m){
+  if(m.t==="hello"){
+    net.players[c.peer] = {id:c.peer, name:m.name, total:0, q:0, done:null};
+    hostBroadcast(rosterMsg());
+    paintRoster();
+  }
+  if(m.t==="prog" || m.t==="done"){
+    applyProg(c.peer, m);
+    hostBroadcast(Object.assign({}, m, {id:c.peer}), c);
+  }
+}
+function hostDrop(c){
+  net.conns = net.conns.filter(x=>x!==c);
+  const p = net.players[c.peer];
+  if(p){
+    if(net.racing && !net.finished){ p.dropped = true; p.done = Infinity; }
+    else if(!net.racing) delete net.players[c.peer];
+  }
+  if(!net.racing){ hostBroadcast(rosterMsg()); paintRoster(); }
+  else { paintRace(); checkAllDone(); }
+}
+function joinRoom(){
+  const me = myIdentity();
+  if(!me) return lobbyStatus("⚠️ Pick CARLOS / LUCAS or type a name first!");
+  if(!window.Peer) return lobbyStatus("⚠️ Network didn't load — check internet & refresh the page");
+  const code = $("joinCode").value.trim();
+  if(code.length !== 4) return lobbyStatus("⚠️ Enter the 4-digit room code");
+  if(net.peer) return;
+  net.me = me; net.isHost = false;
+  lobbyStatus("Joining room " + code + "…");
+  net.peer = new Peer();
+  net.peer.on("open", ()=>{
+    const c = net.peer.connect("cxg2026-"+code);
+    net.hostConn = c;
+    c.on("open", ()=>{
+      net.myId = net.peer.id;
+      c.send({t:"hello", name:me.name});
+      lobbyStatus("✅ Connected! Waiting for the host to start…");
+    });
+    c.on("data", guestOnData);
+    c.on("close", ()=>{ if(!net.finished) netLost(); });
+  });
+  net.peer.on("error", ()=>{
+    net.peer = null;
+    lobbyStatus("⚠️ Room not found — check the code and try again");
+  });
+}
+function guestOnData(m){
+  if(m.t==="roster"){
+    net.players = {};
+    m.players.forEach(p=> net.players[p.id] = {id:p.id, name:p.name, total:0, q:0, done:null});
+    paintRoster();
+  }
+  if(m.t==="start"){
+    net.players = {};
+    m.players.forEach(p=> net.players[p.id] = {id:p.id, name:p.name, total:0, q:0, done:null});
+    net.qs = m.qs;
+    beginRace();
+  }
+  if(m.t==="prog" || m.t==="done") applyProg(m.id, m);
+}
+function applyProg(id, m){
+  const p = net.players[id];
+  if(!p) return;
+  p.total = m.total; p.q = m.q;
+  if(m.t==="done") p.done = m.total;
+  paintRace();
+  checkAllDone();
+}
+function netLost(){
+  cancelAnimationFrame(oRAF);
+  try{ net.peer && net.peer.destroy(); }catch(e){}
+  goMenu();
+  showFeedback("📶 CONNECTION LOST", "#ff6a7a");
+}
+function hostStartRace(){
+  net.qs = Array.from({length:DUEL_N}, makeQuestion);
+  net.racing = true;
+  hostBroadcast({t:"start", qs:net.qs, players:Object.values(net.players).map(p=>({id:p.id,name:p.name}))});
+  beginRace();
+}
+function beginRace(){
+  net.racing = true; net.finished = false;
+  net.myQ = 0; net.myTotal = 0; net.qStart = null; net.myDone = null;
+  showScreen("duelScreen");
+  $("duelHead").classList.add("hidden");
+  $("raceBoard").classList.remove("hidden");
+  $("duelProgress").textContent = "";
+  paintRace();
+  $("readyName").textContent = "🚀 GET READY!";
+  $("readyName").style.color = "#ffd54a";
+  $("readyMsg").innerHTML = "Everyone races the SAME " + DUEL_N + " questions.<br>Wrong or too slow = +" + PENALTY + "s penalty ⚠️";
+  $("readyBtn").style.display = "none";
+  $("readyScreen").classList.remove("hidden");
+  let n = 3;
+  const iv = setInterval(()=>{
+    if(n>0){ $("readyName").textContent = n; sndTick(); }
+    else {
+      clearInterval(iv);
+      $("readyScreen").classList.add("hidden");
+      $("readyBtn").style.display = "";
+      oNextQ();
+    }
+    n--;
+  }, 800);
+}
+function sendProg(done){
+  const m = { t: done?"done":"prog", total: net.myTotal, q: net.myQ };
+  if(net.isHost){ applyProg("host", m); hostBroadcast(Object.assign({}, m, {id:"host"})); }
+  else { applyProg(net.myId, m); try{ net.hostConn.send(m); }catch(e){} }
+}
+function paintRace(){
+  if(!net || !net.racing) return;
+  const running = net.qStart ? (performance.now()-net.qStart)/1000 : 0;
+  const meP = net.players[net.myId];
+  if(meP && net.myDone==null){ meP.total = net.myTotal + running; meP.q = net.myQ>0?net.myQ-1+(oLocked?1:0):0; }
+  const list = Object.values(net.players).slice().sort((a,b)=>{
+    const ad = a.done!=null, bd = b.done!=null;
+    if(ad && bd) return a.done-b.done;
+    return a.total-b.total;
+  });
+  $("raceBoard").innerHTML = list.map((p,i)=>{
+    const isMe = p.id===net.myId;
+    const status = p.dropped ? "❌" : (p.done!=null && p.done!==Infinity ? p.done.toFixed(1)+"s ✅" : p.total.toFixed(1)+"s");
+    return `<div style="display:flex;justify-content:space-between;padding:3px 10px;border-radius:8px;${isMe?"background:rgba(255,213,74,.15);":""}">
+      <span>${i===0?"👑 ":""}${p.name}${isMe?" ⭐":""}</span>
+      <span style="color:#ffd54a;font-weight:800;">${status}</span></div>`;
+  }).join("");
+  $("stopwatch").textContent = (net.myTotal + running).toFixed(1) + "s";
+}
+function oNextQ(){
+  net.myQ++;
+  $("duelProgress").textContent = "Question " + net.myQ + " / " + DUEL_N;
+  oLocked=false; oWarned=false;
+  const q = net.qs[net.myQ-1];
+  oAnswer = q.ans;
+  $("duelQ").textContent = q.text;
+  renderAnswers("duelAnswers", q, oAnswerFn);
+  net.qStart = performance.now();
+  oDeadline = net.qStart + TIME_LIMIT;
+  cancelAnimationFrame(oRAF);
+  oTick();
+}
+function oTick(){
+  const left = oDeadline - performance.now();
+  $("duelTimer").style.transform = `scaleX(${Math.max(0,left/TIME_LIMIT)})`;
+  paintRace();
+  if(left<1000 && !oWarned){ oWarned=true; sndTick(); }
+  if(left<=0){ if(!oLocked) oMiss(null); return; }
+  oRAF = requestAnimationFrame(oTick);
+}
+function oAnswerFn(btn, v){
+  if(oLocked) return;
+  if(v !== oAnswer) return oMiss(btn);
+  oLocked = true;
+  cancelAnimationFrame(oRAF);
+  const elapsed = (performance.now()-net.qStart)/1000;
+  btn.classList.add("correct");
+  sndRight();
+  net.myTotal += elapsed;
+  net.qStart = null;
+  sendProg(false);
+  setTimeout(oStep, 450);
+}
+function oMiss(btn){
+  oLocked = true;
+  cancelAnimationFrame(oRAF);
+  if(btn) btn.classList.add("wrong");
+  markCorrect("duelAnswers", oAnswer);
+  sndWrong();
+  const elapsed = net.qStart ? Math.min((performance.now()-net.qStart)/1000, TIME_LIMIT/1000) : TIME_LIMIT/1000;
+  net.myTotal += elapsed + PENALTY;
+  net.qStart = null;
+  sendProg(false);
+  showFeedback("+" + PENALTY + "s PENALTY! 💣", "#ff6a7a");
+  setTimeout(oStep, 800);
+}
+function oStep(){
+  if(net.myQ >= DUEL_N){
+    net.myDone = net.myTotal;
+    const meP = net.players[net.myId];
+    if(meP){ meP.done = net.myTotal; meP.total = net.myTotal; }
+    if(net.me.key){
+      const p = P[net.me.key];
+      if(!p.bestDuel || net.myTotal < p.bestDuel){ p.bestDuel = net.myTotal; saveP(p); }
+    }
+    sendProg(true);
+    $("duelQ").textContent = "🏁";
+    $("duelAnswers").innerHTML = `<div style="grid-column:1/3;text-align:center;font-size:19px;font-weight:800;opacity:.85;padding:16px 0;">Finished in ${net.myTotal.toFixed(1)}s — waiting for the others…</div>`;
+    paintRace();
+    checkAllDone();
+  } else oNextQ();
+}
+function checkAllDone(){
+  if(!net || !net.racing || net.finished) return;
+  if(net.myDone == null) return;
+  const list = Object.values(net.players);
+  if(list.every(p=>p.done != null)) raceFinish();
+}
+function raceFinish(){
+  net.finished = true; net.racing = false;
+  cancelAnimationFrame(oRAF);
+  const list = Object.values(net.players).filter(p=>p.done!==Infinity).sort((a,b)=>a.done-b.done);
+  const w = list[0];
+  const iWon = w && w.id === net.myId;
+  if(iWon && net.me.key){
+    const p = P[net.me.key];
+    const first = p.champs === 0;
+    p.champs++;
+    saveP(p);
+    $("champBossMsg").textContent = first ? "🐲 " + p.name + " UNLOCKED THE ULTIMATE BOSS FIGHT! Find it on the menu!" : "";
+  } else {
+    $("champBossMsg").textContent = "";
+  }
+  $("champName").textContent = "👑 " + (w ? w.name : "?") + " 👑";
+  $("champName").style.color = "#ffd54a";
+  $("champSub").textContent = "WINS THE RACE!";
+  $("champAvatar").innerHTML = (w && w.id===net.myId && net.me.key) ? avatarSVG(latestAvatar(P[net.me.key]), 110) : "";
+  $("champTimes").innerHTML = list.map((p,i)=>`${["🥇","🥈","🥉"][i]||(i+1)+"."} ${p.name} — <b>${p.done.toFixed(1)}s</b>`).join("<br>");
+  $("champRecord").innerHTML = "";
+  throwConfetti("confetti");
+  sndFanfare();
+  $("champScreen").classList.remove("hidden");
+  try{ net.peer && net.peer.destroy(); }catch(e){}
 }
 
 /* ================= ULTIMATE BOSS FIGHT ================= */
