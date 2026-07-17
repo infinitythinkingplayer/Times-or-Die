@@ -14,10 +14,9 @@
   }
   .screen { width:100%; max-width:560px; padding:14px; }
   .hidden { display:none !important; }
-  h1 { font-size:38px; text-align:center; margin-bottom:6px; text-shadow:0 4px 0 rgba(0,0,0,.4); }
-  .sub { font-size:16px; opacity:.85; margin-bottom:20px; text-align:center; }
+  h1 { font-size:36px; text-align:center; margin-bottom:6px; text-shadow:0 4px 0 rgba(0,0,0,.4); }
+  .sub { font-size:15px; opacity:.85; margin-bottom:18px; text-align:center; }
 
-  /* ===== BUTTONS ===== */
   .bigbtn {
     font-size:24px; font-weight:900; padding:15px 40px; border-radius:18px; border:none; cursor:pointer;
     color:#1a1a2e; background:linear-gradient(180deg,#ffe066,#ffb32c);
@@ -31,27 +30,32 @@
   }
 
   /* ===== PLAYER SELECT ===== */
-  .pcards { display:flex; gap:14px; margin-bottom:18px; }
+  .pcards { display:flex; gap:14px; margin-bottom:16px; }
   .pcard {
-    flex:1; border-radius:20px; padding:16px 10px 14px; text-align:center; cursor:pointer;
+    flex:1; border-radius:20px; padding:14px 10px 12px; text-align:center;
     border:3px solid; transition:transform .1s;
   }
-  .pcard:active { transform:scale(.96); }
   .pcard.carlos { background:linear-gradient(170deg,#3a1020,#24101c); border-color:#ff4a5a; box-shadow:0 0 24px rgba(255,74,90,.3); }
   .pcard.lucas  { background:linear-gradient(170deg,#101c3a,#0d1430); border-color:#3a7bff; box-shadow:0 0 24px rgba(58,123,255,.3); }
-  .pcard .pname { font-size:24px; font-weight:900; margin:6px 0 8px; letter-spacing:1px; }
+  .pcard .pname { font-size:22px; font-weight:900; margin:4px 0 6px; letter-spacing:1px; }
   .pcard.carlos .pname { color:#ff6a7a; }
   .pcard.lucas  .pname { color:#6aa2ff; }
-  .pstats { font-size:13px; line-height:1.8; opacity:.9; }
+  .pstats { font-size:12.5px; line-height:1.75; opacity:.9; }
   .playAs {
-    margin-top:10px; font-size:16px; font-weight:800; padding:10px 0; width:100%; border-radius:12px;
+    margin-top:8px; font-size:16px; font-weight:800; padding:10px 0; width:100%; border-radius:12px;
     border:none; cursor:pointer; color:#fff;
   }
   .pcard.carlos .playAs { background:linear-gradient(180deg,#ff5a6a,#c92438); box-shadow:0 4px 0 #7f1622; }
   .pcard.lucas  .playAs { background:linear-gradient(180deg,#3a7bff,#2450c9); box-shadow:0 4px 0 #16327f; }
+  .bossBtn {
+    margin-top:8px; font-size:15px; font-weight:800; padding:9px 0; width:100%; border-radius:12px;
+    border:none; cursor:pointer; color:#fff;
+    background:linear-gradient(180deg,#8a2be2,#4b0d8f); box-shadow:0 4px 0 #2d0857;
+  }
+  .bossBtn:disabled { filter:grayscale(1); opacity:.5; }
 
   #champBtn {
-    width:100%; font-size:22px; font-weight:900; padding:16px 0; border-radius:18px; border:none; cursor:pointer;
+    width:100%; font-size:21px; font-weight:900; padding:15px 0; border-radius:18px; border:none; cursor:pointer;
     color:#1a1a2e; background:linear-gradient(180deg,#ffe066,#ff8a3c);
     box-shadow:0 7px 0 #a34a0a;
   }
@@ -71,7 +75,6 @@
   #livesVal { font-size:18px; letter-spacing:1px; }
   #avVal { color:#7cf2a4; }
 
-  /* ===== TIMER ===== */
   .timerWrap {
     height:18px; background:rgba(255,255,255,.1); border-radius:10px; overflow:hidden;
     margin-bottom:16px; border:2px solid rgba(255,255,255,.15);
@@ -82,13 +85,12 @@
     border-radius:8px; transform-origin:left;
   }
 
-  /* ===== QUESTION / ANSWERS ===== */
   .qBox {
     text-align:center; background:rgba(255,255,255,.06); border:3px solid #4a5aff;
-    border-radius:22px; padding:22px 10px; margin-bottom:16px;
+    border-radius:22px; padding:20px 10px; margin-bottom:16px;
     box-shadow:0 0 30px rgba(74,90,255,.35);
   }
-  .qBox .q { font-size:54px; font-weight:900; letter-spacing:3px; text-shadow:0 4px 0 rgba(0,0,0,.35); }
+  .qBox .q { font-size:52px; font-weight:900; letter-spacing:3px; text-shadow:0 4px 0 rgba(0,0,0,.35); }
   .answers { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .ans {
     font-size:32px; font-weight:800; padding:18px 0; border-radius:18px; border:none; cursor:pointer;
@@ -99,7 +101,6 @@
   .ans.correct { background:linear-gradient(180deg,#3ce07b,#1ca551); box-shadow:0 6px 0 #0d6b32; }
   .ans.wrong { background:linear-gradient(180deg,#ff5a5a,#c92424); box-shadow:0 6px 0 #7f1616; }
 
-  /* ===== OVERLAYS ===== */
   .overlay {
     position:fixed; inset:0; background:rgba(8,10,30,.93); display:flex;
     align-items:center; justify-content:center; flex-direction:column; z-index:50; text-align:center; padding:20px;
@@ -113,10 +114,9 @@
   @keyframes popIn { 0%{transform:scale(.3);} 100%{transform:scale(1);} }
   .avName { font-size:24px; font-weight:900; color:#ffd54a; margin-top:10px; }
   .avRarity { font-size:13px; letter-spacing:2px; text-transform:uppercase; opacity:.8; margin-top:4px; }
-  #collection { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:14px 0 20px; max-width:480px; max-height:180px; overflow-y:auto; }
+  #collection { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:14px 0 20px; max-width:480px; max-height:170px; overflow-y:auto; }
   #collection svg { filter:drop-shadow(0 3px 4px rgba(0,0,0,.5)); }
 
-  /* ===== BOMB ===== */
   #bombLayer { position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; pointer-events:none; }
   #bomb { font-size:110px; animation:drop .5s ease-in forwards; }
   @keyframes drop { 0%{transform:translateY(-60vh) rotate(-30deg);} 100%{transform:translateY(0) rotate(0);} }
@@ -129,43 +129,46 @@
   }
 
   #feedback {
-    position:fixed; top:16%; left:0; right:0; text-align:center; font-size:42px; font-weight:900;
+    position:fixed; top:15%; left:0; right:0; text-align:center; font-size:40px; font-weight:900;
     pointer-events:none; z-index:40; text-shadow:0 4px 0 rgba(0,0,0,.4); opacity:0;
   }
   #feedback.show { animation:fb .7s ease-out; }
   @keyframes fb { 0%{opacity:0; transform:scale(.5);} 30%{opacity:1; transform:scale(1.2);} 100%{opacity:0; transform:scale(1) translateY(-40px);} }
 
-  /* ===== BATTLE ===== */
-  .fighters { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:10px; }
-  .fighter { flex:1; text-align:center; border-radius:16px; padding:8px 4px; border:3px solid transparent; }
-  .fighter.active-carlos { border-color:#ff4a5a; background:rgba(255,74,90,.12); }
-  .fighter.active-lucas  { border-color:#3a7bff; background:rgba(58,123,255,.12); }
-  .fighter .fname { font-weight:900; font-size:17px; }
-  .fighter .weapon { font-size:13px; opacity:.85; }
-  .hpWrap { height:14px; background:rgba(255,255,255,.12); border-radius:8px; overflow:hidden; margin-top:6px; }
-  .hpBar { height:100%; border-radius:8px; transition:width .4s; }
-  #hpC .hpBar { background:linear-gradient(90deg,#ff8a3c,#ff4a5a); }
-  #hpL .hpBar { background:linear-gradient(90deg,#4ab3ff,#3a7bff); }
-  .hpNum { font-size:12px; font-weight:800; margin-top:3px; }
-  #vsBadge { font-size:26px; font-weight:900; padding-top:34px; color:#ffd54a; }
-  #turnBanner {
-    text-align:center; font-size:20px; font-weight:900; letter-spacing:1px; margin-bottom:10px;
-    border-radius:12px; padding:8px;
+  /* ===== SPEED DUEL ===== */
+  .duelHead { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px; }
+  .duelSide { flex:1; text-align:center; border-radius:14px; padding:8px 4px; border:2px solid rgba(255,255,255,.15); }
+  .duelSide.carlos { border-color:#ff4a5a; }
+  .duelSide.lucas { border-color:#3a7bff; }
+  .duelSide .dname { font-weight:900; font-size:15px; }
+  .duelSide .dtime { font-size:20px; font-weight:900; color:#ffd54a; }
+  #stopwatch { text-align:center; font-size:44px; font-weight:900; color:#7cf2a4; margin-bottom:4px; letter-spacing:2px; }
+  #duelProgress { text-align:center; font-size:15px; font-weight:800; opacity:.8; margin-bottom:10px; }
+
+  /* ===== BOSS ===== */
+  #bossTop { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+  #bossPic { flex-shrink:0; animation:bossFloat 2.4s ease-in-out infinite; }
+  @keyframes bossFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+  #bossInfo { flex:1; }
+  #bossName { font-size:20px; font-weight:900; color:#c86aff; text-shadow:0 0 12px rgba(138,43,226,.8); }
+  .hpWrap { height:16px; background:rgba(255,255,255,.12); border-radius:8px; overflow:hidden; margin-top:6px; border:2px solid rgba(138,43,226,.5); }
+  .hpBar { height:100%; border-radius:8px; transition:width .4s; background:linear-gradient(90deg,#c86aff,#8a2be2); }
+  #bossHPn { font-size:13px; font-weight:800; margin-top:3px; }
+  #bossPlayerRow { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding:6px 10px; background:rgba(255,255,255,.06); border-radius:12px; }
+  #bossPlayerName { font-weight:900; }
+  #bossHearts { font-size:20px; letter-spacing:2px; }
+  .flyThing {
+    position:fixed; font-size:60px; z-index:70; pointer-events:none; top:24%;
+    animation:fly .5s linear forwards;
   }
-  #turnBanner.carlos { background:rgba(255,74,90,.18); color:#ff8a94; }
-  #turnBanner.lucas  { background:rgba(58,123,255,.18); color:#8ab2ff; }
+  @keyframes fly { 0%{opacity:1;} 100%{opacity:1; transform:translateX(var(--dx)) rotate(720deg);} }
   .dmgPop {
     position:fixed; font-size:44px; font-weight:900; z-index:70; pointer-events:none;
     animation:dmgAnim .9s ease-out forwards; text-shadow:0 3px 0 rgba(0,0,0,.5);
   }
   @keyframes dmgAnim { 0%{opacity:0; transform:scale(.4);} 25%{opacity:1; transform:scale(1.4);} 100%{opacity:0; transform:scale(1) translateY(-70px);} }
-  .flyWeapon {
-    position:fixed; font-size:60px; z-index:70; pointer-events:none; top:22%;
-    animation:fly .5s linear forwards;
-  }
-  @keyframes fly { 0%{opacity:1;} 100%{opacity:1; transform:translateX(var(--dx)) rotate(720deg);} }
 
-  #confetti span {
+  #confetti span, #bossConfetti span {
     position:fixed; top:-5vh; font-size:26px; z-index:45; pointer-events:none;
     animation:fall linear forwards;
   }
@@ -174,29 +177,31 @@
 </head>
 <body>
 
-<!-- ============ PLAYER SELECT / MENU ============ -->
+<!-- ============ MENU ============ -->
 <div class="screen" id="menuScreen">
   <h1>⚡ CARLOS &amp; LUCAS<br>X GAMES ⚡</h1>
-  <p class="sub">Train your multiplication power. Collect avatars.<br>Unlock <b>10 avatars</b> to get ⚔️ SURPRISE WEAPONS &amp; fight for the 🏆 CHAMPIONSHIP!</p>
+  <p class="sub">Train on your own iPad. Collect avatars &amp; weapons.<br>Then face off in the ⚔️ SPEED DUEL — and beat the 🐲 ULTIMATE BOSS!</p>
   <div class="pcards">
-    <div class="pcard carlos" onclick="startSolo('carlos')">
+    <div class="pcard carlos">
       <div id="cAvatar"></div>
       <div class="pname">CARLOS</div>
       <div class="pstats" id="cStats"></div>
-      <button class="playAs">▶ PLAY</button>
+      <button class="playAs" onclick="startSolo('carlos')">▶ TRAIN</button>
+      <button class="bossBtn" id="bossC" onclick="startBoss('carlos')">🐲 BOSS</button>
     </div>
-    <div class="pcard lucas" onclick="startSolo('lucas')">
+    <div class="pcard lucas">
       <div id="lAvatar"></div>
       <div class="pname">LUCAS</div>
       <div class="pstats" id="lStats"></div>
-      <button class="playAs">▶ PLAY</button>
+      <button class="playAs" onclick="startSolo('lucas')">▶ TRAIN</button>
+      <button class="bossBtn" id="bossL" onclick="startBoss('lucas')">🐲 BOSS</button>
     </div>
   </div>
-  <button id="champBtn" onclick="startBattle()">⚔️ CHAMPIONSHIP BATTLE 🏆</button>
+  <button id="champBtn" onclick="startDuel()">⚔️ SPEED DUEL — 10 QUESTIONS 🏆</button>
   <div id="champLock"></div>
 </div>
 
-<!-- ============ SOLO GAME ============ -->
+<!-- ============ SOLO ============ -->
 <div class="screen hidden" id="soloScreen">
   <div class="dash">
     <div class="stat"><div class="label" id="playerLabel">Player</div><div class="val" id="scoreVal">0</div></div>
@@ -209,32 +214,47 @@
   <div class="answers" id="soloAnswers"></div>
 </div>
 
-<!-- ============ BATTLE ============ -->
-<div class="screen hidden" id="battleScreen">
-  <div class="fighters">
-    <div class="fighter" id="fC">
-      <div id="battleAvC"></div>
-      <div class="fname" style="color:#ff6a7a;">CARLOS</div>
-      <div class="weapon" id="wC"></div>
-      <div class="hpWrap" id="hpC"><div class="hpBar" style="width:100%"></div></div>
-      <div class="hpNum" id="hpCn">100 HP</div>
-    </div>
-    <div id="vsBadge">VS</div>
-    <div class="fighter" id="fL">
-      <div id="battleAvL"></div>
-      <div class="fname" style="color:#6aa2ff;">LUCAS</div>
-      <div class="weapon" id="wL"></div>
-      <div class="hpWrap" id="hpL"><div class="hpBar" style="width:100%"></div></div>
-      <div class="hpNum" id="hpLn">100 HP</div>
+<!-- ============ SPEED DUEL ============ -->
+<div class="screen hidden" id="duelScreen">
+  <div class="duelHead">
+    <div class="duelSide carlos"><div class="dname" style="color:#ff6a7a;">CARLOS</div><div class="dtime" id="timeC">--</div></div>
+    <div style="font-size:22px;font-weight:900;color:#ffd54a;">VS</div>
+    <div class="duelSide lucas"><div class="dname" style="color:#6aa2ff;">LUCAS</div><div class="dtime" id="timeL">--</div></div>
+  </div>
+  <div id="stopwatch">0.0s</div>
+  <div id="duelProgress">Question 1 / 10</div>
+  <div class="timerWrap"><div class="timerBar" id="duelTimer"></div></div>
+  <div class="qBox"><div class="q" id="duelQ">4 × 7</div></div>
+  <div class="answers" id="duelAnswers"></div>
+</div>
+
+<!-- ============ BOSS FIGHT ============ -->
+<div class="screen hidden" id="bossScreen">
+  <div id="bossTop">
+    <div id="bossPic"></div>
+    <div id="bossInfo">
+      <div id="bossName">🐲 MEGA MATH DEMON</div>
+      <div class="hpWrap"><div class="hpBar" id="bossHP" style="width:100%"></div></div>
+      <div id="bossHPn">150 / 150 HP</div>
     </div>
   </div>
-  <div id="turnBanner"></div>
-  <div class="timerWrap"><div class="timerBar" id="battleTimer"></div></div>
-  <div class="qBox"><div class="q" id="battleQ">4 × 7</div></div>
-  <div class="answers" id="battleAnswers"></div>
+  <div id="bossPlayerRow">
+    <span id="bossPlayerName">CARLOS 🗡️</span>
+    <span id="bossHearts">❤️❤️❤️</span>
+  </div>
+  <div class="timerWrap"><div class="timerBar" id="bossTimer"></div></div>
+  <div class="qBox"><div class="q" id="bossQ">4 × 7</div></div>
+  <div class="answers" id="bossAnswers"></div>
 </div>
 
 <div id="feedback"></div>
+
+<!-- ============ READY (duel turns) ============ -->
+<div class="overlay hidden" id="readyScreen">
+  <h1 id="readyName" style="font-size:44px;"></h1>
+  <p class="sub" id="readyMsg" style="font-size:18px;"></p>
+  <button class="bigbtn" id="readyBtn">🚀 GO!</button>
+</div>
 
 <!-- ============ AVATAR UNLOCK ============ -->
 <div class="overlay hidden" id="unlockScreen">
@@ -257,7 +277,7 @@
   </div>
 </div>
 
-<!-- ============ GAME OVER ============ -->
+<!-- ============ GAME OVER (solo) ============ -->
 <div class="overlay hidden" id="overScreen">
   <h1>💥 GAME OVER 💥</h1>
   <p class="sub">Score: <b id="finalScore" style="color:#ffd54a;font-size:24px;">0</b>
@@ -274,13 +294,27 @@
 <!-- ============ CHAMPION ============ -->
 <div class="overlay hidden" id="champScreen">
   <div id="confetti"></div>
-  <div style="font-size:80px;">🏆</div>
-  <h1 id="champName" style="font-size:46px;"></h1>
-  <p class="sub" style="font-size:22px;font-weight:900;color:#ffd54a;">IS THE CHAMPION!</p>
-  <div id="champAvatar" style="margin-bottom:14px;"></div>
+  <div style="font-size:76px;">🏆</div>
+  <h1 id="champName" style="font-size:44px;"></h1>
+  <p class="sub" style="font-size:20px;font-weight:900;color:#ffd54a;" id="champSub">IS THE SPEED CHAMPION!</p>
+  <div id="champAvatar" style="margin-bottom:10px;"></div>
+  <p class="sub" id="champTimes" style="font-size:17px;"></p>
   <p class="sub" id="champRecord"></p>
+  <p class="sub" id="champBossMsg" style="color:#c86aff;font-weight:800;"></p>
   <div>
-    <button class="bigbtn" onclick="startBattle()">⚔️ REMATCH</button>
+    <button class="bigbtn" onclick="startDuel()">⚔️ REMATCH</button>
+    <button class="smallbtn" onclick="goMenu()">🏠 MENU</button>
+  </div>
+</div>
+
+<!-- ============ BOSS RESULT ============ -->
+<div class="overlay hidden" id="bossResultScreen">
+  <div id="bossConfetti"></div>
+  <div id="bossResultEmoji" style="font-size:80px;"></div>
+  <h1 id="bossResultTitle" style="font-size:40px;"></h1>
+  <p class="sub" id="bossResultMsg" style="font-size:17px;"></p>
+  <div>
+    <button class="bigbtn" id="bossRetryBtn">⚔️ FIGHT AGAIN</button>
     <button class="smallbtn" onclick="goMenu()">🏠 MENU</button>
   </div>
 </div>
@@ -312,9 +346,10 @@ const AVATARS = [
   {name:"KING LUCAS",      rarity:"MYTHIC",    skin:"#ffd23e", shirt:"#3a7bff", pants:"#222",    face:"cool", hat:"crown"},
   {name:"RAINBOW MASTER",  rarity:"MYTHIC",    skin:"#ffd23e", shirt:"rainbow", pants:"#222",    face:"cool", hat:"crown"},
 ];
+const BOSS_AVATAR = {name:"MEGA MATH DEMON", skin:"#b04aff", shirt:"#1a0530", pants:"#0d0220", face:"angry", hat:"horns"};
 
-/* ================= WEAPONS (surprise unlocks!) ================= */
-const WEAPON_THRESHOLDS = [10, 13, 16, 19, 23]; // avatars needed
+/* ================= WEAPONS ================= */
+const WEAPON_THRESHOLDS = [10, 13, 16, 19, 23];
 const WEAPONS = [
   {name:"Wooden Sword",       emoji:"🗡️", dmg:12},
   {name:"Laser Blaster",      emoji:"🔫", dmg:15},
@@ -381,45 +416,57 @@ const sndUnlock= ()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.
 const sndTick  = ()=>{ beep(1200,.05,"sine",.06); };
 const sndHit   = ()=>{ beep(220,.15,"sawtooth",.25); setTimeout(()=>beep(110,.2,"sawtooth",.2),80); };
 const sndFanfare=()=>{ [523,659,784,1047,784,1047,1319].forEach((f,i)=>setTimeout(()=>beep(f,.22,"triangle",.22), i*160)); };
+const sndBossRoar=()=>{ beep(90,.5,"sawtooth",.3); setTimeout(()=>beep(70,.6,"sawtooth",.3),200); };
 
-/* ================= PROFILES (saved on this device) ================= */
+/* ================= PROFILES ================= */
 function loadP(key, name){
-  try{
-    const d = JSON.parse(localStorage.getItem("cxg_"+key));
-    if(d) return d;
-  }catch(e){}
-  return {key, name, best:0, totalCorrect:0, avatars:0, champs:0};
+  let d = null;
+  try{ d = JSON.parse(localStorage.getItem("cxg_"+key)); }catch(e){}
+  d = d || {};
+  return {key, name, best:d.best||0, totalCorrect:d.totalCorrect||0, avatars:d.avatars||0,
+          champs:d.champs||0, bossWins:d.bossWins||0, bestDuel:d.bestDuel||0};
 }
 function saveP(p){ try{ localStorage.setItem("cxg_"+p.key, JSON.stringify(p)); }catch(e){} }
 const P = { carlos: loadP("carlos","CARLOS"), lucas: loadP("lucas","LUCAS") };
 
 const $ = id => document.getElementById(id);
 const BATTLE_NEED = 10;
+const ALL_SCREENS = ["menuScreen","soloScreen","duelScreen","bossScreen"];
+const ALL_OVERLAYS = ["readyScreen","unlockScreen","weaponScreen","overScreen","champScreen","bossResultScreen"];
+function showScreen(id){
+  ALL_SCREENS.forEach(s=>$(s).classList.toggle("hidden", s!==id));
+  ALL_OVERLAYS.forEach(s=>$(s).classList.add("hidden"));
+}
 
 /* ================= MENU ================= */
 function goMenu(){
-  ["soloScreen","battleScreen","overScreen","champScreen","unlockScreen","weaponScreen"].forEach(s=>$(s).classList.add("hidden"));
-  $("menuScreen").classList.remove("hidden");
+  showScreen("menuScreen");
   renderMenu();
 }
 function statsHTML(p){
   const w = weaponsOf(p);
-  return `🏅 Best: <b>${p.best}</b><br>🧱 Avatars: <b>${p.avatars}/${AVATARS.length}</b><br>` +
-         `⚔️ Weapons: <b>${w.length ? w.map(x=>x.emoji).join("") : "🔒"}</b><br>🏆 Titles: <b>${p.champs}</b>`;
+  return `🏅 Best: <b>${p.best}</b> · 🧱 <b>${p.avatars}/${AVATARS.length}</b><br>` +
+         `⚔️ <b>${w.length ? w.map(x=>x.emoji).join("") : "🔒"}</b><br>` +
+         `🏆 <b>${p.champs}</b> · 🐲 <b>${p.bossWins}</b>` +
+         (p.bestDuel ? `<br>⏱️ Best duel: <b>${p.bestDuel.toFixed(1)}s</b>` : "");
 }
 function renderMenu(){
-  $("cAvatar").innerHTML = avatarSVG(latestAvatar(P.carlos), 84);
-  $("lAvatar").innerHTML = avatarSVG(latestAvatar(P.lucas), 84);
+  $("cAvatar").innerHTML = avatarSVG(latestAvatar(P.carlos), 80);
+  $("lAvatar").innerHTML = avatarSVG(latestAvatar(P.lucas), 80);
   $("cStats").innerHTML = statsHTML(P.carlos);
   $("lStats").innerHTML = statsHTML(P.lucas);
   const cOK = P.carlos.avatars >= BATTLE_NEED, lOK = P.lucas.avatars >= BATTLE_NEED;
   $("champBtn").disabled = !(cOK && lOK);
   $("champLock").innerHTML = (cOK && lOK)
-    ? "⚡ Both warriors are armed. FIGHT!"
-    : `🔒 Need ${BATTLE_NEED} avatars each to fight — Carlos ${P.carlos.avatars}/${BATTLE_NEED} · Lucas ${P.lucas.avatars}/${BATTLE_NEED}`;
+    ? "⚡ 10 questions each — fastest total time wins! Wrong answer = +5s penalty"
+    : `🔒 Need ${BATTLE_NEED} avatars each — Carlos ${P.carlos.avatars}/${BATTLE_NEED} · Lucas ${P.lucas.avatars}/${BATTLE_NEED}`;
+  $("bossC").disabled = P.carlos.champs < 1;
+  $("bossL").disabled = P.lucas.champs < 1;
+  $("bossC").textContent = P.carlos.champs < 1 ? "🔒 BOSS (win a duel)" : "🐲 BOSS FIGHT";
+  $("bossL").textContent = P.lucas.champs < 1 ? "🔒 BOSS (win a duel)" : "🐲 BOSS FIGHT";
 }
 
-/* ================= SHARED QUESTION GEN ================= */
+/* ================= SHARED ================= */
 const TIME_LIMIT = 3000;
 function makeQuestion(){
   const a = 2 + Math.floor(Math.random()*8);
@@ -437,6 +484,19 @@ function makeQuestion(){
     if(t>0 && t!==ans) opts.add(t);
   }
   return {text:`${a} × ${b}`, ans, opts:[...opts].sort(()=>Math.random()-.5)};
+}
+function renderAnswers(containerId, q, handler){
+  const c = $(containerId);
+  c.innerHTML = "";
+  q.opts.forEach(v=>{
+    const btn = document.createElement("button");
+    btn.className="ans"; btn.textContent=v;
+    btn.onclick = ()=>handler(btn, v);
+    c.appendChild(btn);
+  });
+}
+function markCorrect(containerId, ans){
+  [...document.querySelectorAll("#"+containerId+" .ans")].forEach(b=>{ if(+b.textContent===ans) b.classList.add("correct"); });
 }
 function showFeedback(txt, color){
   const f = $("feedback");
@@ -459,6 +519,40 @@ function dropBomb(after){
     after();
   }, 1250);
 }
+function throwConfetti(elId){
+  const c = $(elId);
+  c.innerHTML = "";
+  const bits = ["🎉","⭐","🏆","🎊","✨","👑"];
+  for(let i=0;i<28;i++){
+    const s = document.createElement("span");
+    s.textContent = bits[Math.floor(Math.random()*bits.length)];
+    s.style.left = Math.random()*96 + "vw";
+    s.style.animationDuration = (2 + Math.random()*2.5) + "s";
+    s.style.animationDelay = Math.random()*1.2 + "s";
+    c.appendChild(s);
+  }
+}
+function flyThing(emoji, fromLeft){
+  const fly = document.createElement("div");
+  fly.className = "flyThing";
+  fly.textContent = emoji;
+  fly.style.left = fromLeft ? "12%" : "auto";
+  fly.style.right = fromLeft ? "auto" : "12%";
+  fly.style.setProperty("--dx", (fromLeft?1:-1)*Math.min(window.innerWidth*.55, 320) + "px");
+  document.body.appendChild(fly);
+  setTimeout(()=>fly.remove(), 550);
+}
+function dmgPop(txt, color, onLeft){
+  const pop = document.createElement("div");
+  pop.className = "dmgPop";
+  pop.textContent = txt;
+  pop.style.color = color;
+  pop.style.top = "20%";
+  pop.style.left = onLeft ? "18%" : "auto";
+  pop.style.right = onLeft ? "auto" : "18%";
+  document.body.appendChild(pop);
+  setTimeout(()=>pop.remove(), 950);
+}
 
 /* ================= SOLO MODE ================= */
 let curPlayer, score, streak, lives, curAnswer, timerRAF, deadline, locked=false, warned;
@@ -466,8 +560,7 @@ let curPlayer, score, streak, lives, curAnswer, timerRAF, deadline, locked=false
 function startSolo(who){
   curPlayer = who;
   score=0; streak=0; lives=3;
-  ["menuScreen","overScreen","champScreen"].forEach(s=>$(s).classList.add("hidden"));
-  $("soloScreen").classList.remove("hidden");
+  showScreen("soloScreen");
   $("playerLabel").textContent = P[who].name + " · Score";
   updateDash();
   soloNext();
@@ -483,13 +576,7 @@ function soloNext(){
   const q = makeQuestion();
   curAnswer = q.ans;
   $("soloQ").textContent = q.text;
-  $("soloAnswers").innerHTML = "";
-  q.opts.forEach(v=>{
-    const btn = document.createElement("button");
-    btn.className="ans"; btn.textContent=v;
-    btn.onclick = ()=>soloAnswer(btn, v);
-    $("soloAnswers").appendChild(btn);
-  });
+  renderAnswers("soloAnswers", q, soloAnswer);
   deadline = performance.now() + TIME_LIMIT;
   cancelAnimationFrame(timerRAF);
   soloTick();
@@ -515,7 +602,6 @@ function soloAnswer(btn, v){
     const pts = 10 + Math.round(timeLeft/1000*5) + streak*2;
     score += pts;
     showFeedback(streak>=3 ? `+${pts} 🔥 STREAK x${streak}!` : `+${pts} ✅`, "#3ce07b");
-    // avatar unlock every 5 total correct (progress saved forever)
     let unlockedNow = false;
     if(p.totalCorrect % 5 === 0 && p.avatars < AVATARS.length){
       p.avatars++;
@@ -527,7 +613,7 @@ function soloAnswer(btn, v){
     else setTimeout(soloNext, 650);
   } else {
     btn.classList.add("wrong");
-    [...document.querySelectorAll("#soloAnswers .ans")].forEach(b=>{ if(+b.textContent===curAnswer) b.classList.add("correct"); });
+    markCorrect("soloAnswers", curAnswer);
     soloFail();
   }
 }
@@ -548,7 +634,6 @@ function showUnlock(p){
   $("unlockScreen").classList.remove("hidden");
   setTimeout(()=>{
     $("unlockScreen").classList.add("hidden");
-    // did this avatar unlock a weapon?
     const wi = WEAPON_THRESHOLDS.indexOf(p.avatars);
     if(wi >= 0) showWeapon(p, wi);
     else soloNext();
@@ -561,7 +646,7 @@ function showWeapon(p, wi){
   $("weaponName").textContent = w.name;
   $("weaponPower").textContent = "💥 POWER: " + w.dmg;
   $("battleUnlockedMsg").textContent = (p.avatars === BATTLE_NEED)
-    ? "🏆 " + p.name + " CAN NOW FIGHT IN THE CHAMPIONSHIP! ⚔️" : "";
+    ? "⚔️ " + p.name + " IS READY FOR THE SPEED DUEL! 🏆" : "";
   $("weaponScreen").classList.remove("hidden");
   setTimeout(()=>{
     $("weaponScreen").classList.add("hidden");
@@ -588,58 +673,181 @@ function soloOver(){
   $("overScreen").classList.remove("hidden");
 }
 
-/* ================= CHAMPIONSHIP BATTLE ================= */
-const MAX_HP = 100;
-let hp, turn, bAnswer, bDeadline, bRAF, bLocked, bWarned;
+/* ================= SPEED DUEL (10 questions, least total time wins) ================= */
+const DUEL_N = 10;
+const PENALTY = 5;   // seconds added for wrong/timeout
+let duel;
+let dAnswer, dRAF, dDeadline, dLocked, dWarned;
 
-function startBattle(){
+function startDuel(){
   if(P.carlos.avatars < BATTLE_NEED || P.lucas.avatars < BATTLE_NEED) return;
-  ["menuScreen","champScreen","overScreen"].forEach(s=>$(s).classList.add("hidden"));
-  $("battleScreen").classList.remove("hidden");
-  hp = {carlos:MAX_HP, lucas:MAX_HP};
-  turn = Math.random()<.5 ? "carlos" : "lucas";
-  $("battleAvC").innerHTML = avatarSVG(latestAvatar(P.carlos), 74);
-  $("battleAvL").innerHTML = avatarSVG(latestAvatar(P.lucas), 74);
-  $("wC").textContent = bestWeapon(P.carlos).emoji + " " + bestWeapon(P.carlos).name;
-  $("wL").textContent = bestWeapon(P.lucas).emoji + " " + bestWeapon(P.lucas).name;
-  updateHP();
-  battleNext();
+  duel = { order: Math.random()<.5 ? ["carlos","lucas"] : ["lucas","carlos"], idx:0, times:{} };
+  showScreen("duelScreen");
+  $("timeC").textContent = "--";
+  $("timeL").textContent = "--";
+  duelReady();
 }
-function updateHP(){
-  $("hpC").firstElementChild.style.width = Math.max(0,hp.carlos) + "%";
-  $("hpL").firstElementChild.style.width = Math.max(0,hp.lucas) + "%";
-  $("hpCn").textContent = Math.max(0,hp.carlos) + " HP";
-  $("hpLn").textContent = Math.max(0,hp.lucas) + " HP";
+function duelReady(){
+  const who = duel.order[duel.idx];
+  const other = who==="carlos" ? "lucas" : "carlos";
+  $("readyName").textContent = (who==="carlos"?"🔴 ":"🔵 ") + P[who].name;
+  $("readyName").style.color = who==="carlos" ? "#ff6a7a" : "#6aa2ff";
+  $("readyMsg").innerHTML = duel.idx===0
+    ? `${DUEL_N} questions. Answer FAST — every second counts!<br>Wrong answer or too slow = +${PENALTY}s penalty ⚠️`
+    : `Beat ${P[other].name}'s time: <b style="color:#ffd54a;">${duel.times[other].toFixed(1)}s</b> 🔥`;
+  $("readyBtn").onclick = duelRun;
+  $("readyScreen").classList.remove("hidden");
 }
-function battleNext(){
+function duelRun(){
+  $("readyScreen").classList.add("hidden");
+  duel.qNum = 0;
+  duel.total = 0;
+  duel.qStart = null;
+  updateStopwatch();
+  duelNextQ();
+}
+function updateStopwatch(){
+  const running = duel.qStart ? (performance.now()-duel.qStart)/1000 : 0;
+  $("stopwatch").textContent = (duel.total + running).toFixed(1) + "s";
+}
+function duelNextQ(){
+  duel.qNum++;
+  $("duelProgress").textContent = `${P[duel.order[duel.idx]].name} — Question ${duel.qNum} / ${DUEL_N}`;
+  dLocked=false; dWarned=false;
+  const q = makeQuestion();
+  dAnswer = q.ans;
+  $("duelQ").textContent = q.text;
+  renderAnswers("duelAnswers", q, duelAnswer);
+  duel.qStart = performance.now();
+  dDeadline = duel.qStart + TIME_LIMIT;
+  cancelAnimationFrame(dRAF);
+  duelTick();
+}
+function duelTick(){
+  const left = dDeadline - performance.now();
+  $("duelTimer").style.transform = `scaleX(${Math.max(0,left/TIME_LIMIT)})`;
+  updateStopwatch();
+  if(left < 1000 && !dWarned){ dWarned=true; sndTick(); }
+  if(left <= 0){ if(!dLocked) duelMiss(null); return; }
+  dRAF = requestAnimationFrame(duelTick);
+}
+function duelAnswer(btn, v){
+  if(dLocked) return;
+  dLocked = true;
+  cancelAnimationFrame(dRAF);
+  const elapsed = (performance.now() - duel.qStart)/1000;
+  if(v === dAnswer){
+    btn.classList.add("correct");
+    sndRight();
+    duel.total += elapsed;
+    duel.qStart = null;
+    updateStopwatch();
+    showFeedback("+" + elapsed.toFixed(1) + "s ✅", "#3ce07b");
+    setTimeout(duelStep, 550);
+  } else {
+    duelMiss(btn);
+  }
+}
+function duelMiss(btn){
+  dLocked = true;
+  cancelAnimationFrame(dRAF);
+  if(btn) btn.classList.add("wrong");
+  markCorrect("duelAnswers", dAnswer);
+  sndWrong();
+  const elapsed = duel.qStart ? (performance.now() - duel.qStart)/1000 : TIME_LIMIT/1000;
+  duel.total += Math.min(elapsed, TIME_LIMIT/1000) + PENALTY;
+  duel.qStart = null;
+  updateStopwatch();
+  showFeedback(`+${PENALTY}s PENALTY! 💣`, "#ff6a7a");
+  setTimeout(duelStep, 900);
+}
+function duelStep(){
+  if(duel.qNum >= DUEL_N){
+    const who = duel.order[duel.idx];
+    duel.times[who] = duel.total;
+    $(who==="carlos"?"timeC":"timeL").textContent = duel.total.toFixed(1) + "s";
+    const p = P[who];
+    if(!p.bestDuel || duel.total < p.bestDuel){ p.bestDuel = duel.total; saveP(p); }
+    if(duel.idx === 0){
+      duel.idx = 1;
+      duelReady();
+    } else {
+      duelFinish();
+    }
+  } else {
+    duelNextQ();
+  }
+}
+function duelFinish(){
+  const tC = duel.times.carlos, tL = duel.times.lucas;
+  if(Math.abs(tC-tL) < 0.05){
+    $("champName").textContent = "🤝 TIE!";
+    $("champName").style.color = "#ffd54a";
+    $("champSub").textContent = "UNBELIEVABLE!";
+    $("champAvatar").innerHTML = "";
+    $("champTimes").innerHTML = `Carlos <b>${tC.toFixed(1)}s</b> — Lucas <b>${tL.toFixed(1)}s</b>`;
+    $("champRecord").textContent = "Rematch to decide the champion!";
+    $("champBossMsg").textContent = "";
+    $("champScreen").classList.remove("hidden");
+    return;
+  }
+  const winner = tC < tL ? "carlos" : "lucas";
+  const p = P[winner];
+  const firstChamp = p.champs === 0;
+  p.champs++;
+  saveP(p);
+  $("champName").textContent = "👑 " + p.name + " 👑";
+  $("champName").style.color = winner==="carlos" ? "#ff6a7a" : "#6aa2ff";
+  $("champSub").textContent = "IS THE SPEED CHAMPION!";
+  $("champAvatar").innerHTML = avatarSVG(latestAvatar(p), 120);
+  $("champTimes").innerHTML = `⏱️ Carlos <b style="color:#ff6a7a;">${tC.toFixed(1)}s</b> &nbsp;vs&nbsp; Lucas <b style="color:#6aa2ff;">${tL.toFixed(1)}s</b>`;
+  $("champRecord").innerHTML = `🏆 Titles — Carlos: <b>${P.carlos.champs}</b> · Lucas: <b>${P.lucas.champs}</b>`;
+  $("champBossMsg").textContent = firstChamp
+    ? "🐲 " + p.name + " UNLOCKED THE ULTIMATE BOSS FIGHT! Find it on the menu!" : "";
+  throwConfetti("confetti");
+  sndFanfare();
+  $("champScreen").classList.remove("hidden");
+}
+
+/* ================= ULTIMATE BOSS FIGHT ================= */
+const BOSS_MAX = 150;
+let boss;
+let bAnswer, bRAF, bDeadline, bLocked, bWarned;
+
+function startBoss(who){
+  if(P[who].champs < 1) return;
+  boss = { player: who, hp: BOSS_MAX, hearts: 3 };
+  showScreen("bossScreen");
+  $("bossPic").innerHTML = avatarSVG(BOSS_AVATAR, 120);
+  const w = bestWeapon(P[who]);
+  $("bossPlayerName").textContent = P[who].name + " " + (w?w.emoji:"");
+  updateBossUI();
+  sndBossRoar();
+  setTimeout(bossNextQ, 600);
+}
+function updateBossUI(){
+  $("bossHP").style.width = Math.max(0, boss.hp/BOSS_MAX*100) + "%";
+  $("bossHPn").textContent = Math.max(0,boss.hp) + " / " + BOSS_MAX + " HP";
+  $("bossHearts").textContent = "❤️".repeat(boss.hearts) + "🖤".repeat(3-boss.hearts);
+}
+function bossNextQ(){
   bLocked=false; bWarned=false;
-  $("fC").className = "fighter" + (turn==="carlos" ? " active-carlos" : "");
-  $("fL").className = "fighter" + (turn==="lucas" ? " active-lucas" : "");
-  const tb = $("turnBanner");
-  tb.className = turn;
-  tb.textContent = "⚔️ " + P[turn].name + "'S TURN — ATTACK! ⚔️";
   const q = makeQuestion();
   bAnswer = q.ans;
-  $("battleQ").textContent = q.text;
-  $("battleAnswers").innerHTML = "";
-  q.opts.forEach(v=>{
-    const btn = document.createElement("button");
-    btn.className="ans"; btn.textContent=v;
-    btn.onclick = ()=>battleAnswer(btn, v);
-    $("battleAnswers").appendChild(btn);
-  });
+  $("bossQ").textContent = q.text;
+  renderAnswers("bossAnswers", q, bossAnswer);
   bDeadline = performance.now() + TIME_LIMIT;
   cancelAnimationFrame(bRAF);
-  battleTick();
+  bossTick();
 }
-function battleTick(){
+function bossTick(){
   const left = bDeadline - performance.now();
-  $("battleTimer").style.transform = `scaleX(${Math.max(0,left/TIME_LIMIT)})`;
-  if(left < 1000 && !bWarned){ bWarned=true; sndTick(); setTimeout(sndTick,300); setTimeout(sndTick,600); }
-  if(left <= 0){ if(!bLocked) battleMiss(); return; }
-  bRAF = requestAnimationFrame(battleTick);
+  $("bossTimer").style.transform = `scaleX(${Math.max(0,left/TIME_LIMIT)})`;
+  if(left < 1000 && !bWarned){ bWarned=true; sndTick(); setTimeout(sndTick,300); }
+  if(left <= 0){ if(!bLocked) bossHitPlayer(); return; }
+  bRAF = requestAnimationFrame(bossTick);
 }
-function battleAnswer(btn, v){
+function bossAnswer(btn, v){
   if(bLocked) return;
   bLocked = true;
   cancelAnimationFrame(bRAF);
@@ -647,94 +855,78 @@ function battleAnswer(btn, v){
     btn.classList.add("correct");
     sndRight();
     const timeLeft = Math.max(0, bDeadline - performance.now());
-    const w = bestWeapon(P[turn]);
-    const dmg = w.dmg + Math.round(timeLeft/1000 * 4);   // speed bonus up to +12
-    attack(turn, dmg, w);
+    const w = bestWeapon(P[boss.player]);
+    const dmg = (w?w.dmg:10) + Math.round(timeLeft/1000*4);
+    flyThing(w?w.emoji:"👊", false);
+    setTimeout(()=>{
+      sndHit();
+      boss.hp -= dmg;
+      updateBossUI();
+      dmgPop("-"+dmg, "#c86aff", true);
+      document.body.classList.add("shake");
+      setTimeout(()=>document.body.classList.remove("shake"), 500);
+      if(boss.hp <= 0) setTimeout(bossDefeated, 700);
+      else setTimeout(bossNextQ, 650);
+    }, 520);
   } else {
     btn.classList.add("wrong");
-    [...document.querySelectorAll("#battleAnswers .ans")].forEach(b=>{ if(+b.textContent===bAnswer) b.classList.add("correct"); });
-    battleMiss();
+    markCorrect("bossAnswers", bAnswer);
+    bossHitPlayer();
   }
 }
-function battleMiss(){
+function bossHitPlayer(){
   bLocked = true;
   cancelAnimationFrame(bRAF);
-  sndWrong();
-  showFeedback("MISS! 💨", "#ff8a94");
-  setTimeout(()=>{ switchTurn(); }, 900);
-}
-function attack(attacker, dmg, w){
-  const defender = attacker==="carlos" ? "lucas" : "carlos";
-  // weapon flies across
-  const fly = document.createElement("div");
-  fly.className = "flyWeapon";
-  fly.textContent = w.emoji;
-  const fromLeft = attacker==="carlos";
-  fly.style.left = fromLeft ? "12%" : "auto";
-  fly.style.right = fromLeft ? "auto" : "12%";
-  fly.style.setProperty("--dx", (fromLeft?1:-1)*Math.min(window.innerWidth*.55, 320) + "px");
-  document.body.appendChild(fly);
+  sndBossRoar();
+  flyThing("🔥", true);
   setTimeout(()=>{
-    fly.remove();
-    sndHit();
-    hp[defender] -= dmg;
-    updateHP();
+    sndWrong();
+    boss.hearts--;
+    updateBossUI();
+    dmgPop("-1 ❤️", "#ff6a7a", false);
     document.body.classList.add("shake");
     setTimeout(()=>document.body.classList.remove("shake"), 500);
-    const pop = document.createElement("div");
-    pop.className = "dmgPop";
-    pop.textContent = "-" + dmg;
-    pop.style.color = defender==="carlos" ? "#ff6a7a" : "#6aa2ff";
-    pop.style.top = "20%";
-    pop.style.left = defender==="carlos" ? "18%" : "auto";
-    pop.style.right = defender==="carlos" ? "auto" : "18%";
-    document.body.appendChild(pop);
-    setTimeout(()=>pop.remove(), 950);
-    if(hp[defender] <= 0) setTimeout(()=>crownChampion(attacker), 800);
-    else setTimeout(switchTurn, 800);
+    if(boss.hearts <= 0) setTimeout(bossLost, 700);
+    else setTimeout(bossNextQ, 650);
   }, 520);
 }
-function switchTurn(){
-  turn = turn==="carlos" ? "lucas" : "carlos";
-  battleNext();
-}
-function crownChampion(winner){
-  const p = P[winner];
-  p.champs++;
+function bossDefeated(){
+  const p = P[boss.player];
+  p.bossWins++;
   saveP(p);
-  $("battleScreen").classList.add("hidden");
-  $("champName").textContent = "👑 " + p.name + " 👑";
-  $("champName").style.color = winner==="carlos" ? "#ff6a7a" : "#6aa2ff";
-  $("champAvatar").innerHTML = avatarSVG(latestAvatar(p), 130);
-  $("champRecord").innerHTML = `🏆 Championships — Carlos: <b>${P.carlos.champs}</b> · Lucas: <b>${P.lucas.champs}</b>`;
-  // confetti
-  const c = $("confetti");
-  c.innerHTML = "";
-  const bits = ["🎉","⭐","🏆","🎊","✨","👑"];
-  for(let i=0;i<28;i++){
-    const s = document.createElement("span");
-    s.textContent = bits[Math.floor(Math.random()*bits.length)];
-    s.style.left = Math.random()*96 + "vw";
-    s.style.animationDuration = (2 + Math.random()*2.5) + "s";
-    s.style.animationDelay = Math.random()*1.2 + "s";
-    c.appendChild(s);
-  }
+  $("bossResultEmoji").textContent = "🐲💀";
+  $("bossResultTitle").textContent = "BOSS DEFEATED!";
+  $("bossResultTitle").style.color = "#7cf2a4";
+  $("bossResultMsg").innerHTML = "👑 <b>" + p.name + "</b> destroyed the MEGA MATH DEMON!<br>🐲 Boss trophies: <b>" + p.bossWins + "</b> — you are a MULTIPLICATION LEGEND!";
+  $("bossRetryBtn").onclick = ()=>startBoss(boss.player);
+  throwConfetti("bossConfetti");
   sndFanfare();
-  $("champScreen").classList.remove("hidden");
+  $("bossResultScreen").classList.remove("hidden");
+}
+function bossLost(){
+  $("bossResultEmoji").textContent = "🐲🔥";
+  $("bossResultTitle").textContent = "THE BOSS WINS...";
+  $("bossResultTitle").style.color = "#ff6a7a";
+  $("bossResultMsg").innerHTML = "The MEGA MATH DEMON is still standing!<br>Train harder and come back stronger 💪";
+  $("bossRetryBtn").onclick = ()=>startBoss(boss.player);
+  $("bossConfetti").innerHTML = "";
+  sndBoom();
+  $("bossResultScreen").classList.remove("hidden");
 }
 
 /* keyboard 1-4 */
 document.addEventListener("keydown", e=>{
   const n = parseInt(e.key);
-  if(n>=1 && n<=4){
-    const active = !$("soloScreen").classList.contains("hidden") ? "#soloAnswers"
-                 : !$("battleScreen").classList.contains("hidden") ? "#battleAnswers" : null;
-    if(!active) return;
-    const overlayOpen = ["unlockScreen","weaponScreen","overScreen","champScreen"].some(s=>!$(s).classList.contains("hidden"));
-    if(overlayOpen) return;
-    const btns = document.querySelectorAll(active + " .ans");
-    if(btns[n-1]) btns[n-1].click();
-  }
+  if(!(n>=1 && n<=4)) return;
+  const overlayOpen = ALL_OVERLAYS.some(s=>!$(s).classList.contains("hidden"));
+  if(overlayOpen) return;
+  let containerId = null;
+  if(!$("soloScreen").classList.contains("hidden")) containerId = "soloAnswers";
+  else if(!$("duelScreen").classList.contains("hidden")) containerId = "duelAnswers";
+  else if(!$("bossScreen").classList.contains("hidden")) containerId = "bossAnswers";
+  if(!containerId) return;
+  const btns = document.querySelectorAll("#"+containerId+" .ans");
+  if(btns[n-1]) btns[n-1].click();
 });
 
 renderMenu();
