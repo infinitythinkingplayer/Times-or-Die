@@ -258,7 +258,7 @@
 <div class="overlay hidden" id="duelModeScreen">
   <h1>⚔️ SPEED RACE</h1>
   <p class="sub">10 questions — fastest total time wins the 🎁 SUPER MEGA PRIZE!<br>Wrong or too slow = +5s penalty ⚠️</p>
-  <button class="bigbtn" onclick="openGroupPick()">📱 THIS iPAD — 2~5 PLAYERS</button>
+  <button class="bigbtn" onclick="openGroupPick()">📱 THIS iPAD — 2~6 PLAYERS</button>
   <div style="height:12px;"></div>
   <button class="bigbtn" onclick="openLobby()">📶 ONLINE — MORE iPADS</button>
   <button class="smallbtn" onclick="goMenu()" style="margin-top:14px;">🏠 MENU</button>
@@ -267,7 +267,7 @@
 <!-- ============ GROUP PICK (same iPad) ============ -->
 <div class="overlay hidden" id="groupScreen">
   <h1>📱 WHO IS RACING?</h1>
-  <p class="sub">Tap 2–5 players. Everyone answers the SAME 10 questions, one at a time!</p>
+  <p class="sub">Tap 2–6 players. Everyone answers the SAME 10 questions, one at a time!</p>
   <div id="groupPick"></div>
   <button class="bigbtn" id="groupStartBtn" onclick="groupStart()" disabled>🚀 START RACE</button>
   <button class="smallbtn" onclick="goMenu()" style="margin-top:10px;">🏠 MENU</button>
@@ -362,6 +362,7 @@ const PLAYERS = [
   {key:"florba", name:"FLORBA", color:"#3ce07b"},
   {key:"luba",   name:"LUBA",   color:"#6aa2ff"},
   {key:"carlba", name:"CARLBA", color:"#ff5a5a"},
+  {key:"guoren", name:"GUOREN", color:"#c86aff"},
 ];
 const playerColor = key => (PLAYERS.find(p=>p.key===key)||{}).color || "#ffd54a";
 
@@ -753,7 +754,7 @@ function openGroupPick(){
 function groupToggle(key){
   const i = grp.sel.indexOf(key);
   if(i>=0) grp.sel.splice(i,1);
-  else if(grp.sel.length < 5) grp.sel.push(key);
+  else if(grp.sel.length < 6) grp.sel.push(key);
   PLAYERS.forEach(pl=> $("gp_"+pl.key).classList.toggle("sel", grp.sel.includes(pl.key)));
   $("groupStartBtn").disabled = grp.sel.length < 2;
 }
@@ -878,6 +879,13 @@ function groupFinish(){
 
 /* ================= ONLINE RACE (2-8 iPads) ================= */
 const MAX_PLAYERS = 8;
+/* stronger connection setup: STUN + free TURN relays help iPads find each other */
+const PEER_OPTS = { debug: 0, config: { iceServers: [
+  {urls:"stun:stun.l.google.com:19302"},
+  {urls:"stun:stun1.l.google.com:19302"},
+  {urls:"turn:openrelay.metered.ca:80",  username:"openrelayproject", credential:"openrelayproject"},
+  {urls:"turn:openrelay.metered.ca:443", username:"openrelayproject", credential:"openrelayproject"},
+]}};
 let net = null;
 let oAnswer, oRAF, oDeadline, oLocked, oWarned;
 
@@ -933,12 +941,23 @@ function createRoom(){
   const code = String(1000+Math.floor(Math.random()*9000));
   net.isHost = true; net.me = me; net.myId = "host";
   net.players = { host: {id:"host", name:me.name, total:0, q:0, done:null} };
-  lobbyStatus("Creating room…");
-  net.peer = new Peer("cxg2026-"+code);
+  lobbyStatus("⏳ Creating room… (works best when all iPads are on Wi-Fi)");
+  net.peer = new Peer("cxg2026-"+code, PEER_OPTS);
+  net.opened = false;
+  net.timer = setTimeout(()=>{
+    if(!net.opened){
+      try{ net.peer.destroy(); }catch(e){}
+      net.peer = null;
+      lobbyStatus("⚠️ Network is slow — press <b>CREATE ROOM</b> again");
+    }
+  }, 12000);
   net.peer.on("open", ()=>{
+    net.opened = true;
+    clearTimeout(net.timer);
     lobbyStatus(`Room code: <b style="font-size:44px;color:#ffd54a;letter-spacing:6px;">${code}</b><br>Enter this code on the other iPads.`);
     paintRoster();
   });
+  net.peer.on("disconnected", ()=>{ try{ net.peer.reconnect(); }catch(e){} });
   net.peer.on("connection", c=>{
     if(net.racing || net.conns.length >= MAX_PLAYERS-1){ try{c.close();}catch(e){} return; }
     net.conns.push(c);
@@ -979,12 +998,22 @@ function joinRoom(){
   if(code.length !== 4) return lobbyStatus("⚠️ Enter the 4-digit room code");
   if(net.peer) return;
   net.me = me; net.isHost = false;
-  lobbyStatus("Joining room " + code + "…");
-  net.peer = new Peer();
+  lobbyStatus("⏳ Joining room " + code + "…");
+  net.peer = new Peer(PEER_OPTS);
+  net.connected = false;
+  net.timer = setTimeout(()=>{
+    if(!net.connected){
+      try{ net.peer.destroy(); }catch(e){}
+      net.peer = null;
+      lobbyStatus("⚠️ Could not reach the room.<br>Check the code, make sure the host room is open,<br>then press <b>JOIN</b> again (Wi-Fi works best)");
+    }
+  }, 15000);
   net.peer.on("open", ()=>{
-    const c = net.peer.connect("cxg2026-"+code);
+    const c = net.peer.connect("cxg2026-"+code, {reliable:true});
     net.hostConn = c;
     c.on("open", ()=>{
+      net.connected = true;
+      clearTimeout(net.timer);
       net.myId = net.peer.id;
       c.send({t:"hello", name:me.name});
       lobbyStatus("✅ Connected! Waiting for the host to start…");
@@ -992,6 +1021,7 @@ function joinRoom(){
     c.on("data", guestOnData);
     c.on("close", ()=>{ if(!net.finished) netLost(); });
   });
+  net.peer.on("disconnected", ()=>{ try{ net.peer.reconnect(); }catch(e){} });
   net.peer.on("error", ()=>{
     net.peer = null;
     lobbyStatus("⚠️ Room not found — check the code and try again");
